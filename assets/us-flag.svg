@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="7410" height="3900" viewBox="0 0 7410 3900" role="img" aria-labelledby="flag-title flag-desc">
+  <title id="flag-title">United States marketplace</title>
+  <desc id="flag-desc">A United States flag with thirteen alternating stripes, a navy canton containing fifty gold stars, and a US marketplace label.</desc>
+
+  <defs>
+    <clipPath id="flag-frame">
+      <rect width="7410" height="3900" rx="180"/>
+    </clipPath>
+    <filter id="badge-shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="32" stdDeviation="38" flood-color="#0b0d12" flood-opacity=".28"/>
+    </filter>
+    <path id="gold-star" d="M0-82 18.41-25.34 77.98-25.34 29.79 9.68 48.19 66.34 0 31.32-48.19 66.34-29.79 9.68-77.98-25.34-18.41-25.34Z"/>
+  </defs>
+
+  <g clip-path="url(#flag-frame)">
+    <!-- Thirteen equal 300-unit stripes, beginning and ending in red. -->
+    <path fill="#fff" d="M0 0h7410v3900H0z"/>
+    <path fill="#b22234" d="M0 0h7410v300H0zM0 600h7410v300H0zM0 1200h7410v300H0zM0 1800h7410v300H0zM0 2400h7410v300H0zM0 3000h7410v300H0zM0 3600h7410v300H0z"/>
+
+    <!-- The canton is 0.76 of the hoist wide and seven stripes high. -->
+    <path fill="#3c3b6e" d="M0 0h2964v2100H0z"/>
+
+    <!-- Fifty stars in the official alternating 6 / 5 arrangement. -->
+    <g fill="#c8b100">
+      <g transform="translate(247 210)"><use href="#gold-star"/></g>
+      <g transform="translate(741 210)"><use href="#gold-star"/></g>
+      <g transform="translate(1235 210)"><use href="#gold-star"/></g>
+      <g transform="translate(1729 210)"><use href="#gold-star"/></g>
+      <g transform="translate(2223 210)"><use href="#gold-star"/></g>
+      <g transform="translate(2717 210)"><use href="#gold-star"/></g>
+
+      <g transform="translate(494 420)"><use href="#gold-star"/></g>
+      <g transform="translate(988 420)"><use href="#gold-star"/></g>
+      <g transform="translate(1482 420)"><use href="#gold-star"/></g>
+      <g transform="translate(1976 420)"><use href="#gold-star"/></g>
+      <g transform="translate(2470 420)"><use href="#gold-star"/></g>
+
+      <g transform="translate(247 630)"><use href="#gold-star"/></g>
+      <g transform="translate(741 630)"><use href="#gold-star"/></g>
+      <g transform="translate(1235 630)"><use href="#gold-star"/></g>
+      <g transform="translate(1729 630)"><use href="#gold-star"/></g>
+      <g transform="translate(2223 630)"><use href="#gold-star"/></g>
+      <g transform="translate(2717 630)"><use href="#gold-star"/></g>
+
+      <g transform="translate(494 840)"><use href="#gold-star"/></g>
+      <g transform="translate(988 840)"><use href="#gold-star"/></g>
+      <g transform="translate(1482 840)"><use href="#gold-star"/></g>
+      <g transform="translate(1976 840)"><use href="#gold-star"/></g>
+      <g transform="translate(2470 840)"><use href="#gold-star"/></g>
+
+      <g transform="translate(247 1050)"><use href="#gold-star"/></g>
+      <g transform="translate(741 1050)"><use href="#gold-star"/></g>
+      <g transform="translate(1235 1050)"><use href="#gold-star"/></g>
+      <g transform="translate(1729 1050)"><use href="#gold-star"/></g>
+      <g transform="translate(2223 1050)"><use href="#gold-star"/></g>
+      <g transform="translate(2717 1050)"><use href="#gold-star"/></g>
+
+      <g transform="translate(494 1260)"><use href="#gold-star"/></g>
+      <g transform="translate(988 1260)"><use href="#gold-star"/></g>
+      <g transform="translate(1482 1260)"><use href="#gold-star"/></g>
+      <g transform="translate(1976 1260)"><use href="#gold-star"/></g>
+      <g transform="translate(2470 1260)"><use href="#gold-star"/></g>
+
+      <g transform="translate(247 1470)"><use href="#gold-star"/></g>
+      <g transform="translate(741 1470)"><use href="#gold-star"/></g>
+      <g transform="translate(1235 1470)"><use href="#gold-star"/></g>
+      <g transform="translate(1729 1470)"><use href="#gold-star"/></g>
+      <g transform="translate(2223 1470)"><use href="#gold-star"/></g>
+      <g transform="translate(2717 1470)"><use href="#gold-star"/></g>
+
+      <g transform="translate(494 1680)"><use href="#gold-star"/></g>
+      <g transform="translate(988 1680)"><use href="#gold-star"/></g>
+      <g transform="translate(1482 1680)"><use href="#gold-star"/></g>
+      <g transform="translate(1976 1680)"><use href="#gold-star"/></g>
+      <g transform="translate(2470 1680)"><use href="#gold-star"/></g>
+
+      <g transform="translate(247 1890)"><use href="#gold-star"/></g>
+      <g transform="translate(741 1890)"><use href="#gold-star"/></g>
+      <g transform="translate(1235 1890)"><use href="#gold-star"/></g>
+      <g transform="translate(1729 1890)"><use href="#gold-star"/></g>
+      <g transform="translate(2223 1890)"><use href="#gold-star"/></g>
+      <g transform="translate(2717 1890)"><use href="#gold-star"/></g>
+    </g>
+
+    <!-- Lower-right marketplace badge remains legible at hero scale. -->
+    <g transform="translate(5670 2940)" filter="url(#badge-shadow)">
+      <rect width="1260" height="600" rx="300" fill="#10162f" fill-opacity=".92" stroke="#c8b100" stroke-width="18"/>
+      <text x="630" y="345" fill="#fff" font-family="Inter, Arial, Helvetica, sans-serif" font-size="330" font-weight="850" text-anchor="middle" letter-spacing="26">US</text>
+      <circle cx="256" cy="300" r="22" fill="#c8b100"/>
+      <circle cx="1004" cy="300" r="22" fill="#c8b100"/>
+    </g>
+  </g>
+
+  <rect x="9" y="9" width="7392" height="3882" rx="171" fill="none" stroke="#0b0d12" stroke-opacity=".12" stroke-width="18"/>
+</svg>

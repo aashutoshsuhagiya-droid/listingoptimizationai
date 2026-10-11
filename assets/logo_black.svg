@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="72" viewBox="0 0 230 72" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">Listing Optimization AI</title>
+  <desc id="logo-desc">A black geometric listing mark with red growth line and gold arrow beside the Listing Optimization AI wordmark.</desc>
+
+  <g aria-hidden="true">
+    <rect x="3" y="3" width="66" height="66" rx="15" fill="#0b0d12"/>
+
+    <!-- A compact listing grid becomes an upward conversion path. -->
+    <rect x="15" y="18" width="7" height="7" rx="2" fill="#c8b100"/>
+    <rect x="26" y="19" width="23" height="5" rx="2.5" fill="#fff" opacity=".94"/>
+    <rect x="15" y="31" width="7" height="7" rx="2" fill="#fff" opacity=".92"/>
+    <rect x="26" y="32" width="15" height="5" rx="2.5" fill="#fff" opacity=".68"/>
+    <rect x="15" y="44" width="7" height="7" rx="2" fill="#fff" opacity=".72"/>
+    <rect x="26" y="45" width="10" height="5" rx="2.5" fill="#fff" opacity=".46"/>
+
+    <path d="M28 51 39 40l7 5 10-14" fill="none" stroke="#b22234" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m50 29 8-2-2 8" fill="none" stroke="#c8b100" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <text x="84" y="32" fill="#0b0d12" font-family="Inter, Arial, Helvetica, sans-serif" font-size="27" font-weight="800" letter-spacing="-.7">Listing</text>
+    <text x="84" y="56" fill="#0b0d12" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="650" letter-spacing=".15">Optimization</text>
+    <text x="187" y="56" fill="#b22234" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="800" letter-spacing=".1">AI</text>
+    <circle cx="213" cy="51" r="3" fill="#c8b100"/>
+  </g>
+</svg>
