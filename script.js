@@ -11,14 +11,14 @@ qsa('.reveal').forEach(el=>observer.observe(el));
 
 // Variant studio
 const variants={
-  color:{title:'Find their perfect shade.',copy:'Turn one source image into a complete colorway, keeping light, texture, and branding perfectly consistent.',colors:['#b95d60','#cf8b63','#d5b65f','#748d68','#598b93','#63759b','#79678f','#a76e8b','#414353','#898b85','#d4cfbf']},
-  size:{title:'Show every size, instantly.',copy:'Build a consistent range from travel size to family pack without repeating the entire production process.',colors:['#657a94','#657a94','#657a94','#657a94','#657a94','#657a94','#657a94','#657a94','#657a94','#657a94','#657a94']},
-  shape:{title:'Explore every form.',copy:'Test packaging and product silhouettes while preserving brand details, material, and studio-quality lighting.',colors:['#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55','#bd6a55']}
+  color:{title:'Find their perfect shade.',copy:'Turn one source image into a complete colorway, keeping light, texture, and branding perfectly consistent.'},
+  size:{title:'Show every size, instantly.',copy:'Build a consistent range from travel size to family pack without repeating the entire production process.'},
+  shape:{title:'Explore every form.',copy:'Test packaging and product silhouettes while preserving brand details, material, and studio-quality lighting.'}
 };
 const palette=['#efe4dd','#e7ddcd','#e0e4dc','#dae4e7','#dfe0ea','#e8dee7'];
 function renderVariants(type='color'){
   const data=variants[type];qs('#variant-title').textContent=data.title;qs('#variant-copy').textContent=data.copy;
-  qs('#variant-gallery').innerHTML=data.colors.map((c,i)=>`<div class="variant-item ${type==='shape'?'shape':''}" data-label="${type.toUpperCase()} ${String(i+1).padStart(2,'0')}" style="--bg:${palette[i%palette.length]};--product:${c};--scale:${type==='size'?(.6+i*.045):1};--shape:${type==='shape'?(i%3===0?'50%':i%3===1?'2px':'18px 18px 4px 4px'):'5px'};animation-delay:${i*25}ms"><i></i></div>`).join('');
+  qs('#variant-gallery').innerHTML=Array.from({length:11},(_,i)=>`<figure class="variant-item variant-${type}" data-label="${type.toUpperCase()} ${String(i+1).padStart(2,'0')}" style="--bg:${palette[i%palette.length]};--scale:${type==='size'?(.68+i*.035):1};--shape:${type==='shape'?(i%3===0?'50%':i%3===1?'4px':'18px'):'7px'};animation-delay:${i*25}ms"><img src="images/variants/color-${String(i+1).padStart(2,'0')}.png" alt="Product bottle ${type} variant ${i+1}" loading="lazy"></figure>`).join('');
 }
 renderVariants();
 qsa('.variant-tabs button').forEach(btn=>btn.addEventListener('click',()=>{qsa('.variant-tabs button').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false')});btn.classList.add('active');btn.setAttribute('aria-selected','true');renderVariants(btn.dataset.variant)}));
@@ -58,7 +58,7 @@ const galleryData=[
  ['PURE FROM\nTHE SOURCE','#b9dce3','#f8fbfc'],['GLOW ON\nYOUR TERMS','#e8bbb1','#6e463d'],['THE DAILY\nESSENTIAL','#d0d0ca','#33363a'],['SOFTNESS\nTHAT LASTS','#e3ced4','#faf7f2'],['READY FOR\nANYTHING','#bcc8b6','#455b49'],
  ['BRIGHTER\nMORNINGS','#ead780','#fff'],['STRONG BY\nNATURE','#c6ab8b','#5d4432'],['A BETTER\nBASIC','#c6d5e8','#48647e'],['RESET YOUR\nROUTINE','#d0bfd8','#fff'],['MADE FOR\nMOMENTUM','#d9b5a4','#9b4f40']
 ];
-qs('#user-gallery').innerHTML=galleryData.map(([h,bg,item])=>`<div class="gallery-product" data-headline="${h}" style="--bg:${bg};--item:${item}"><i></i></div>`).join('');
+qs('#user-gallery').innerHTML=galleryData.map(([h,bg],i)=>`<figure class="gallery-product" style="--bg:${bg}"><img src="images/user-gallery/user-${String(i+1).padStart(2,'0')}.png" alt="User-created Amazon listing example ${i+1}" loading="lazy"><figcaption>${h.replace('\n','<br>')}</figcaption></figure>`).join('');
 
 // Keep the FAQ concise by opening one answer at a time.
 qsa('.faq-list details').forEach(item=>item.addEventListener('toggle',()=>{
