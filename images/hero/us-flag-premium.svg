@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Premium stylized United States flag</title>
+  <desc id="desc">A cinematic navy, red, white, and gold flag composition designed for a SaaS landing page hero.</desc>
+  <defs>
+    <linearGradient id="background" x1="120" y1="80" x2="1770" y2="1010" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#11122d"/>
+      <stop offset=".52" stop-color="#1d1f49"/>
+      <stop offset="1" stop-color="#090a20"/>
+    </linearGradient>
+    <radialGradient id="redGlow" cx="0" cy="0" r="1" gradientTransform="translate(1550 340) rotate(145) scale(780 610)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#cf3045" stop-opacity=".64"/>
+      <stop offset=".45" stop-color="#b22234" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#b22234" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldGlow" cx="0" cy="0" r="1" gradientTransform="translate(330 210) rotate(39) scale(520 430)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f0d94c" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#c8b100" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="redStripe" x1="120" y1="0" x2="1800" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#86182a"/>
+      <stop offset=".25" stop-color="#c12a40"/>
+      <stop offset=".55" stop-color="#a91f34"/>
+      <stop offset=".78" stop-color="#d43a4d"/>
+      <stop offset="1" stop-color="#86182a"/>
+    </linearGradient>
+    <linearGradient id="whiteStripe" x1="160" y1="0" x2="1770" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#d7d5cf"/>
+      <stop offset=".24" stop-color="#fffdf7"/>
+      <stop offset=".56" stop-color="#e6e3dc"/>
+      <stop offset=".8" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#c9c6c0"/>
+    </linearGradient>
+    <linearGradient id="canton" x1="120" y1="120" x2="792" y2="572" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101234"/>
+      <stop offset=".5" stop-color="#292b63"/>
+      <stop offset="1" stop-color="#17183f"/>
+    </linearGradient>
+    <linearGradient id="clothLight" x1="120" y1="0" x2="1800" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#000" stop-opacity=".34"/>
+      <stop offset=".13" stop-color="#fff" stop-opacity=".18"/>
+      <stop offset=".25" stop-color="#000" stop-opacity=".2"/>
+      <stop offset=".42" stop-color="#fff" stop-opacity=".24"/>
+      <stop offset=".58" stop-color="#000" stop-opacity=".23"/>
+      <stop offset=".75" stop-color="#fff" stop-opacity=".2"/>
+      <stop offset=".9" stop-color="#000" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".1"/>
+    </linearGradient>
+    <linearGradient id="edgeShade" x1="0" y1="120" x2="0" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#000" stop-opacity=".3"/>
+      <stop offset=".12" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".82" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".38"/>
+    </linearGradient>
+    <clipPath id="flagClip">
+      <rect x="120" y="120" width="1680" height="840" rx="30"/>
+    </clipPath>
+    <filter id="flagWave" x="-15%" y="-25%" width="130%" height="150%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency=".003 .012" numOctaves="2" seed="17" result="waveNoise"/>
+      <feDisplacementMap in="SourceGraphic" in2="waveNoise" scale="42" xChannelSelector="R" yChannelSelector="B" result="waved"/>
+      <feDropShadow in="waved" dx="10" dy="35" stdDeviation="34" flood-color="#03040f" flood-opacity=".68"/>
+    </filter>
+    <filter id="grain" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="8" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .2"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <symbol id="star" viewBox="-20 -20 40 40">
+      <path d="M0-18 4.23-5.82 17.12-5.56 6.85 2.22 10.58 14.56 0 7.2-10.58 14.56-6.85 2.22-17.12-5.56-4.23-5.82Z"/>
+    </symbol>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#background)"/>
+  <rect width="1920" height="1080" fill="url(#redGlow)"/>
+  <rect width="1920" height="1080" fill="url(#goldGlow)"/>
+
+  <g opacity=".14" fill="none" stroke="#aeb1dc">
+    <path d="M-160 970 780 30M180 1120 1120 180M610 1120 1550 180M1040 1120 1980 180"/>
+    <path d="M-40 240H1960M-40 540H1960M-40 840H1960" stroke-opacity=".38"/>
+  </g>
+  <g fill="#e2c634" opacity=".75" filter="url(#softGlow)">
+    <circle cx="1640" cy="176" r="4"/><circle cx="1735" cy="230" r="2.5"/><circle cx="1518" cy="112" r="2.5"/>
+    <circle cx="260" cy="886" r="3"/><circle cx="350" cy="952" r="2"/><circle cx="1790" cy="810" r="3"/>
+  </g>
+
+  <g transform="rotate(-2.3 960 540)" filter="url(#flagWave)">
+    <g clip-path="url(#flagClip)">
+      <rect x="120" y="120" width="1680" height="840" fill="url(#whiteStripe)"/>
+      <g fill="url(#redStripe)">
+        <rect x="120" y="120" width="1680" height="64.62"/>
+        <rect x="120" y="249.23" width="1680" height="64.62"/>
+        <rect x="120" y="378.46" width="1680" height="64.62"/>
+        <rect x="120" y="507.69" width="1680" height="64.62"/>
+        <rect x="120" y="636.92" width="1680" height="64.62"/>
+        <rect x="120" y="766.15" width="1680" height="64.62"/>
+        <rect x="120" y="895.38" width="1680" height="64.62"/>
+      </g>
+      <rect x="120" y="120" width="672" height="452.3" fill="url(#canton)"/>
+
+      <g fill="#e4ca27" filter="url(#softGlow)">
+        <g>
+          <use href="#star" x="154" y="139" width="32" height="32"/><use href="#star" x="254" y="139" width="32" height="32"/><use href="#star" x="354" y="139" width="32" height="32"/><use href="#star" x="454" y="139" width="32" height="32"/><use href="#star" x="554" y="139" width="32" height="32"/><use href="#star" x="654" y="139" width="32" height="32"/>
+          <use href="#star" x="204" y="189" width="32" height="32"/><use href="#star" x="304" y="189" width="32" height="32"/><use href="#star" x="404" y="189" width="32" height="32"/><use href="#star" x="504" y="189" width="32" height="32"/><use href="#star" x="604" y="189" width="32" height="32"/>
+          <use href="#star" x="154" y="239" width="32" height="32"/><use href="#star" x="254" y="239" width="32" height="32"/><use href="#star" x="354" y="239" width="32" height="32"/><use href="#star" x="454" y="239" width="32" height="32"/><use href="#star" x="554" y="239" width="32" height="32"/><use href="#star" x="654" y="239" width="32" height="32"/>
+          <use href="#star" x="204" y="289" width="32" height="32"/><use href="#star" x="304" y="289" width="32" height="32"/><use href="#star" x="404" y="289" width="32" height="32"/><use href="#star" x="504" y="289" width="32" height="32"/><use href="#star" x="604" y="289" width="32" height="32"/>
+          <use href="#star" x="154" y="339" width="32" height="32"/><use href="#star" x="254" y="339" width="32" height="32"/><use href="#star" x="354" y="339" width="32" height="32"/><use href="#star" x="454" y="339" width="32" height="32"/><use href="#star" x="554" y="339" width="32" height="32"/><use href="#star" x="654" y="339" width="32" height="32"/>
+          <use href="#star" x="204" y="389" width="32" height="32"/><use href="#star" x="304" y="389" width="32" height="32"/><use href="#star" x="404" y="389" width="32" height="32"/><use href="#star" x="504" y="389" width="32" height="32"/><use href="#star" x="604" y="389" width="32" height="32"/>
+          <use href="#star" x="154" y="439" width="32" height="32"/><use href="#star" x="254" y="439" width="32" height="32"/><use href="#star" x="354" y="439" width="32" height="32"/><use href="#star" x="454" y="439" width="32" height="32"/><use href="#star" x="554" y="439" width="32" height="32"/><use href="#star" x="654" y="439" width="32" height="32"/>
+          <use href="#star" x="204" y="489" width="32" height="32"/><use href="#star" x="304" y="489" width="32" height="32"/><use href="#star" x="404" y="489" width="32" height="32"/><use href="#star" x="504" y="489" width="32" height="32"/><use href="#star" x="604" y="489" width="32" height="32"/>
+          <use href="#star" x="154" y="539" width="32" height="32"/><use href="#star" x="254" y="539" width="32" height="32"/><use href="#star" x="354" y="539" width="32" height="32"/><use href="#star" x="454" y="539" width="32" height="32"/><use href="#star" x="554" y="539" width="32" height="32"/><use href="#star" x="654" y="539" width="32" height="32"/>
+        </g>
+      </g>
+
+      <rect x="120" y="120" width="1680" height="840" fill="url(#clothLight)" opacity=".72" style="mix-blend-mode:soft-light"/>
+      <rect x="120" y="120" width="1680" height="840" fill="url(#edgeShade)"/>
+      <rect x="120" y="120" width="1680" height="840" filter="url(#grain)" opacity=".34" style="mix-blend-mode:overlay"/>
+      <path d="M145 149C520 194 820 83 1160 152s411 20 615-2" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="3"/>
+      <path d="M143 928c370-72 684 24 1015-31s432-16 617 9" fill="none" stroke="#060718" stroke-opacity=".36" stroke-width="6"/>
+    </g>
+    <rect x="120" y="120" width="1680" height="840" rx="30" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="3"/>
+  </g>
+
+  <rect x="1.5" y="1.5" width="1917" height="1077" rx="32" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="3"/>
+</svg>
