@@ -1,6 +1,21 @@
 # Listing Optimization AI
 
-A production-ready, responsive SaaS marketing page built with semantic HTML, CSS, and vanilla JavaScript.
+A responsive SaaS marketing site plus an authenticated product-infographic studio.
+
+## Customer creative studio
+
+Authenticated customers can use `dashboard.html` to:
+
+- upload one to three raw product photographs;
+- enter verified product benefits and exact infographic copy;
+- choose Feature, Benefit, Lifestyle, or Marketplace Main concepts;
+- generate product-reference-based scenes through a server-only image API;
+- apply exact, deterministic typography in the browser; and
+- review and download finished JPG creatives.
+
+The OpenAI key is never sent to the browser. Firebase Admin verifies each user, Firestore enforces per-user daily limits, uploaded images are resized before transport, and generated images are returned without being permanently stored by this codebase.
+
+See [`GENERATION_SETUP.md`](GENERATION_SETUP.md) before deploying the generator.
 
 ## Run locally
 
@@ -10,7 +25,7 @@ Open `index.html` directly, or serve the folder with any static server:
 npx serve .
 ```
 
-The static site has no runtime dependency and can be deployed directly to Vercel, Netlify, GitHub Pages, or any static host. Node dependencies are only needed when regenerating marketing images through the optional pipeline.
+The public pages remain static. The customer generator requires the included Node serverless endpoint, so deploy the full project to Vercel and configure the environment variables in [`GENERATION_SETUP.md`](GENERATION_SETUP.md). A static-only host can display the site but cannot run generation.
 
 ## Image pipeline
 

@@ -2,12 +2,13 @@
   "name": "listing-optimization-ai-landing",
   "version": "1.0.0",
   "private": true,
-  "description": "Static Listing Optimization AI marketing site and automated image pipeline",
+  "description": "Listing Optimization AI marketing site and authenticated product infographic studio",
   "type": "commonjs",
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   },
   "scripts": {
+    "check": "node --check dashboard.js && node --check api/generate-infographic.js && node --check api/_lib/firebase-admin.js && node --check api/_lib/prompt.js",
     "images:dry-run": "node scripts/generate-images.js --dry-run",
     "images:generate": "node scripts/generate-images.js --all",
     "images:fallback": "node scripts/generate-images.js --all --fallback",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "dotenv": "^17.0.0",
+    "firebase-admin": "^13.0.0",
     "openai": "^6.0.0",
     "sharp": "^0.34.0"
   }

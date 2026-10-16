@@ -3,319 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Listing Optimization AI</title>
+  <meta name="description" content="Create marketplace-ready product infographics from your raw product photography.">
+  <title>Creative Studio — Listing Optimization AI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .dashboard-page {
-      min-height: 100vh;
-      background: var(--soft);
-    }
-
-    .dashboard-header {
-      background: var(--navy);
-      color: #fff;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .dashboard-header .container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .dashboard-header .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      line-height: 1.15;
-      letter-spacing: .03em;
-      color: #fff;
-    }
-
-    .dashboard-header .brand strong {
-      font-size: 12px;
-    }
-
-    .dashboard-header .brand-mark {
-      display: flex;
-      align-items: end;
-      gap: 2px;
-      width: 27px;
-      height: 28px;
-      padding: 5px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 5px;
-    }
-
-    .dashboard-header .brand-mark i {
-      display: block;
-      width: 4px;
-      background: var(--red);
-      border-radius: 1px;
-    }
-
-    .dashboard-header .brand-mark i:nth-child(1) { height: 8px; }
-    .dashboard-header .brand-mark i:nth-child(2) { height: 16px; background: #fff; }
-    .dashboard-header .brand-mark i:nth-child(3) { height: 12px; background: #c8b100; }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--red);
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .user-details {
-      text-align: right;
-    }
-
-    .user-details strong {
-      display: block;
-      font-size: 14px;
-    }
-
-    .user-details small {
-      font-size: 11px;
-      color: #b9bbce;
-    }
-
-    .logout-btn {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.5);
-    }
-
-    .dashboard-content {
-      padding: 60px 0;
-    }
-
-    .dashboard-welcome {
-      margin-bottom: 40px;
-    }
-
-    .dashboard-welcome h1 {
-      font-size: 48px;
-      letter-spacing: -0.055em;
-      margin: 0 0 12px;
-      color: var(--ink);
-    }
-
-    .dashboard-welcome p {
-      font-size: 16px;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .dashboard-card {
-      background: #fff;
-      padding: 28px;
-      border-radius: 12px;
-      border: 1px solid #e5e4e9;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .dashboard-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 35px rgba(22, 23, 55, 0.08);
-    }
-
-    .dashboard-card h3 {
-      font-size: 18px;
-      margin: 0 0 8px;
-      color: var(--ink);
-    }
-
-    .dashboard-card p {
-      font-size: 13px;
-      color: var(--muted);
-      margin: 0 0 20px;
-      line-height: 1.6;
-    }
-
-    .dashboard-card .btn {
-      width: 100%;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-
-    .stat-box {
-      background: #fff;
-      padding: 24px;
-      border-radius: 10px;
-      border: 1px solid #e5e4e9;
-      text-align: center;
-    }
-
-    .stat-box strong {
-      display: block;
-      font-size: 32px;
-      letter-spacing: -0.05em;
-      color: var(--red);
-      margin-bottom: 4px;
-    }
-
-    .stat-box p {
-      font-size: 12px;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    @media (max-width: 760px) {
-      .dashboard-welcome h1 {
-        font-size: 36px;
-      }
-
-      .user-details {
-        display: none;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
-<body>
-  <div class="dashboard-page">
+<body class="dashboard-shell is-auth-loading">
+  <div id="auth-loading" class="auth-loading" role="status">
+    <span class="spinner" aria-hidden="true"></span>
+    <p>Securing your workspace…</p>
+  </div>
+
+  <div id="dashboard-app" class="dashboard-app" hidden>
     <header class="dashboard-header">
-      <div class="container">
-        <a href="/" class="brand">
-          <span class="brand-mark"><i></i><i></i><i></i></span>
-          <span>Listing<br><strong>Optimization AI</strong></span>
+      <div class="dashboard-header-inner">
+        <a href="/" class="dashboard-brand" aria-label="Listing Optimization AI home">
+          <img src="assets/logo_black.svg" alt="" width="215" height="48">
         </a>
 
-        <div class="user-info">
-          <div class="user-details">
-            <strong id="user-name">User</strong>
-            <small id="user-email">user@example.com</small>
+        <div class="dashboard-header-actions">
+          <span class="service-pill"><i></i> Creative Studio</span>
+          <div class="dashboard-user">
+            <span id="user-avatar" class="user-avatar" aria-hidden="true">U</span>
+            <div class="user-details">
+              <strong id="user-name">User</strong>
+              <small id="user-email">user@example.com</small>
+            </div>
           </div>
-          <button id="logout-btn" class="logout-btn">Log Out</button>
+          <button id="logout-btn" class="logout-btn" type="button">Log out</button>
         </div>
       </div>
     </header>
 
-    <main class="dashboard-content">
-      <div class="container">
-        <div class="dashboard-welcome">
-          <h1>Welcome to your dashboard</h1>
-          <p>Start optimizing your Amazon listings with AI-powered tools.</p>
+    <main class="dashboard-main">
+      <section class="studio-intro" aria-labelledby="studio-title">
+        <div>
+          <p class="studio-kicker">AI PRODUCT CREATIVE STUDIO</p>
+          <h1 id="studio-title">Turn raw product photos into conversion-ready creatives.</h1>
+          <p>Upload your real product, add verified selling points, and generate polished marketplace images while keeping every headline under your control.</p>
         </div>
-
-        <div class="stats-row">
-          <div class="stat-box">
-            <strong>0</strong>
-            <p>Projects</p>
-          </div>
-          <div class="stat-box">
-            <strong>0</strong>
-            <p>Images Generated</p>
-          </div>
-          <div class="stat-box">
-            <strong>0</strong>
-            <p>A+ Content Pages</p>
-          </div>
+        <div class="studio-assurances" aria-label="Generation safeguards">
+          <span>✓ Product-reference workflow</span>
+          <span>✓ Exact text rendered separately</span>
+          <span>✓ Private server-side API key</span>
         </div>
+      </section>
 
-        <div class="dashboard-grid">
-          <div class="dashboard-card">
-            <h3>New Campaign</h3>
-            <p>Start a new listing optimization project by entering an ASIN or product URL.</p>
-            <a href="#app" class="btn btn-primary">Start New Project →</a>
+      <div class="generator-layout">
+        <aside class="workflow-sidebar" aria-label="Creative workflow">
+          <p class="sidebar-label">YOUR WORKFLOW</p>
+          <ol>
+            <li class="is-active" data-nav-step="1"><span>1</span><div><strong>Product photos</strong><small>Add up to three clear angles</small></div></li>
+            <li data-nav-step="2"><span>2</span><div><strong>Product brief</strong><small>Only verified facts and benefits</small></div></li>
+            <li data-nav-step="3"><span>3</span><div><strong>Creative direction</strong><small>Choose up to three concepts</small></div></li>
+            <li data-nav-step="4"><span>4</span><div><strong>Generate & export</strong><small>Review and download JPG files</small></div></li>
+          </ol>
+          <div class="sidebar-note">
+            <strong>Why text stays accurate</strong>
+            <p>AI creates the scene. Your approved headline and benefits are added afterward with deterministic typography, avoiding misspelled AI text.</p>
+          </div>
+        </aside>
+
+        <section class="generator-panel" aria-labelledby="generator-title">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-eyebrow">NEW CREATIVE PROJECT</p>
+              <h2 id="generator-title">Build your infographic set</h2>
+            </div>
+            <span id="project-status" class="project-status">Draft</span>
           </div>
 
-          <div class="dashboard-card">
-            <h3>Main Image Generator</h3>
-            <p>Create scroll-stopping main images optimized for CTR and conversion.</p>
-            <a href="#app" class="btn btn-primary">Generate Images →</a>
-          </div>
+          <form id="generator-form" novalidate>
+            <section class="form-step" data-step="1" aria-labelledby="upload-title">
+              <div class="step-heading">
+                <span>01</span>
+                <div><h3 id="upload-title">Upload original product photos</h3><p>Use a clean, well-lit front view first. Additional angles help preserve shape and packaging; a plain background gives the best label fidelity.</p></div>
+              </div>
 
-          <div class="dashboard-card">
-            <h3>A+ Content Builder</h3>
-            <p>Build high-converting A+ content modules with proven layouts.</p>
-            <a href="#pricing" class="btn btn-primary">Build A+ Content →</a>
-          </div>
+              <label id="upload-zone" class="upload-zone" for="product-images" tabindex="0">
+                <input id="product-images" name="productImages" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+                <span class="upload-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+                </span>
+                <strong>Drop product photos here</strong>
+                <small>or click to browse · JPG, PNG or WebP · maximum 3 images</small>
+                <em>Primary photo should clearly show the exact packaging and label.</em>
+              </label>
+              <div id="upload-error" class="field-error" role="alert"></div>
+              <div id="upload-previews" class="upload-previews" aria-live="polite"></div>
+            </section>
 
-          <div class="dashboard-card">
-            <h3>Variant Studio</h3>
-            <p>Generate product variants in different colors, sizes, and shapes.</p>
-            <a href="#app" class="btn btn-primary">Try Variant Studio →</a>
-          </div>
+            <section class="form-step" data-step="2" aria-labelledby="brief-title">
+              <div class="step-heading">
+                <span>02</span>
+                <div><h3 id="brief-title">Add the verified product brief</h3><p>This information guides the scene and becomes the exact copy placed on your final infographic.</p></div>
+              </div>
 
-          <div class="dashboard-card">
-            <h3>Market Intelligence</h3>
-            <p>Analyze reviews, competitors, and keywords to understand your market.</p>
-            <a href="#features" class="btn btn-primary">View Insights →</a>
-          </div>
+              <div class="field-grid">
+                <label class="field">
+                  <span>Product name <b>*</b></span>
+                  <input id="product-name" name="productName" type="text" maxlength="80" placeholder="e.g. Hydrating Vitamin C Serum" required>
+                </label>
+                <label class="field">
+                  <span>Category <b>*</b></span>
+                  <input id="product-category" name="category" type="text" maxlength="60" placeholder="e.g. Skincare" required>
+                </label>
+                <label class="field">
+                  <span>Target customer</span>
+                  <input id="target-audience" name="audience" type="text" maxlength="100" placeholder="e.g. Busy professionals with dry skin">
+                </label>
+                <label class="field">
+                  <span>Marketplace</span>
+                  <select id="marketplace" name="marketplace">
+                    <option value="Amazon US">Amazon US</option>
+                    <option value="Amazon UK">Amazon UK</option>
+                    <option value="Amazon India">Amazon India</option>
+                    <option value="Etsy">Etsy</option>
+                    <option value="Shopify">Shopify / DTC</option>
+                  </select>
+                </label>
+              </div>
 
-          <div class="dashboard-card">
-            <h3>SERP Simulator</h3>
-            <p>Preview how your listing looks on Amazon search results pages.</p>
-            <a href="#features" class="btn btn-primary">Test SERP →</a>
+              <label class="field field-wide">
+                <span>Verified benefits <b>*</b> <small>One benefit per line, maximum 3</small></span>
+                <textarea id="product-benefits" name="benefits" rows="4" maxlength="360" placeholder="Deep hydration without a greasy feel&#10;Brightens the appearance of dull skin&#10;Lightweight daily formula" required></textarea>
+              </label>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>Infographic headline</span>
+                  <input id="creative-headline" name="headline" type="text" maxlength="55" placeholder="Leave blank to use product name">
+                </label>
+                <label class="field">
+                  <span>Supporting line</span>
+                  <input id="creative-subheadline" name="subheadline" type="text" maxlength="100" placeholder="Your strongest verified benefit">
+                </label>
+              </div>
+              <div id="brief-error" class="field-error" role="alert"></div>
+            </section>
+
+            <section class="form-step" data-step="3" aria-labelledby="direction-title">
+              <div class="step-heading">
+                <span>03</span>
+                <div><h3 id="direction-title">Choose your creative direction</h3><p>Select one to three concepts. Each concept is generated separately for better quality and control.</p></div>
+              </div>
+
+              <div class="template-grid" role="group" aria-label="Creative concepts">
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="feature-spotlight" checked>
+                  <span class="template-visual feature-visual"><i></i><b>01</b></span>
+                  <strong>Feature Spotlight</strong>
+                  <small>Product on the right with focused headline space on the left.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="benefit-stack">
+                  <span class="template-visual benefit-visual"><i></i><b>02</b></span>
+                  <strong>Benefit Stack</strong>
+                  <small>Premium product scene with three clear benefit callouts.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="lifestyle-story">
+                  <span class="template-visual lifestyle-visual"><i></i><b>03</b></span>
+                  <strong>Lifestyle Story</strong>
+                  <small>Category-relevant lifestyle setting with a clean copy panel.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="marketplace-main">
+                  <span class="template-visual main-visual"><i></i><b>04</b></span>
+                  <strong>Marketplace Main</strong>
+                  <small>Clean white-background product image; automatically generated square.</small>
+                </label>
+              </div>
+              <p id="template-count" class="selection-count">1 of 3 concepts selected</p>
+
+              <div class="field-grid direction-fields">
+                <label class="field">
+                  <span>Visual style</span>
+                  <select id="visual-style" name="visualStyle">
+                    <option value="premium">Premium studio</option>
+                    <option value="clean">Clean clinical</option>
+                    <option value="bold">Bold performance</option>
+                    <option value="natural">Natural lifestyle</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Output format</span>
+                  <select id="canvas-format" name="canvasFormat">
+                    <option value="landscape">Landscape · 3:2</option>
+                    <option value="square">Square · 1:1</option>
+                    <option value="portrait">Portrait · 2:3</option>
+                  </select>
+                </label>
+                <label class="field color-field">
+                  <span>Brand accent</span>
+                  <span class="color-control"><input id="brand-color" name="brandColor" type="color" value="#b22234"><output id="brand-color-value">#B22234</output></span>
+                </label>
+              </div>
+
+              <label class="rights-confirmation">
+                <input id="rights-confirmation" type="checkbox" required>
+                <span>I own or have permission to use these images, and all product claims entered above are accurate.</span>
+              </label>
+              <div id="direction-error" class="field-error" role="alert"></div>
+            </section>
+
+            <div class="generate-bar">
+              <div>
+                <strong>Ready to create?</strong>
+                <small>Paid AI generation takes 30–90 seconds per concept. Compressed references are sent to the configured image provider and are not stored by this app.</small>
+              </div>
+              <button id="generate-btn" class="btn btn-primary generate-submit" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Zm6 11 .9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9L18 14Z"/></svg>
+                Generate creatives
+              </button>
+            </div>
+          </form>
+
+          <div id="generation-progress" class="generation-progress" hidden aria-live="polite">
+            <div class="progress-orbit"><span></span><i></i></div>
+            <div>
+              <strong id="progress-title">Preparing your product references…</strong>
+              <p id="progress-message">Optimizing uploads securely in your browser.</p>
+              <div class="progress-track"><span id="progress-bar"></span></div>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
+
+      <section id="results-section" class="results-section" aria-labelledby="results-title">
+        <div class="results-heading">
+          <div><p class="panel-eyebrow">YOUR OUTPUTS</p><h2 id="results-title">Generated creatives</h2></div>
+          <button id="download-all-btn" class="btn btn-outline-dark results-download-all" type="button" hidden>Download all</button>
+        </div>
+        <div id="results-empty" class="results-empty">
+          <span aria-hidden="true">✦</span>
+          <strong>Your generated images will appear here</strong>
+          <p>Complete the project brief above to create your first marketplace-ready set.</p>
+        </div>
+        <div id="results-grid" class="results-grid" aria-live="polite"></div>
+      </section>
     </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="firebase.js"></script>
-
-  <script>
-    // Protect dashboard - redirect to login if not authenticated
-    Auth.onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.href = '/login.html';
-        return;
-      }
-
-      // Update user info
-      document.getElementById('user-name').textContent = user.displayName || user.email.split('@')[0];
-      document.getElementById('user-email').textContent = user.email;
-    });
-
-    // Logout handler
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-      const result = await Auth.logout();
-      if (result.success) {
-        window.location.href = '/';
-      }
-    });
-  </script>
+  <script src="dashboard.js"></script>
 </body>
 </html>
