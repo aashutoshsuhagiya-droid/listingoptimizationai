@@ -273,10 +273,10 @@
       const result = await Auth.signup(email, password, name);
 
       if (result.success) {
-        showSuccess('Account created! Redirecting...');
+        showSuccess('Account created. Check your email to verify it, then sign in.');
         setTimeout(() => {
-          window.location.href = '/dashboard.html';
-        }, 1000);
+          window.location.href = '/login.html';
+        }, 1800);
       } else {
         showError(result.error);
       }
@@ -296,7 +296,7 @@
     });
 
     Auth.onAuthStateChanged((user) => {
-      if (user && window.location.pathname === '/signup.html') {
+      if (user?.emailVerified && window.location.pathname === '/signup.html') {
         window.location.href = '/dashboard.html';
       }
     });

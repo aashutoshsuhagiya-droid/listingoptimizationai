@@ -1,12 +1,12 @@
 # Image generation pipeline
 
-The pipeline owns the 60 raster assets used by the landing page. It supports OpenAI DALL-E 3 as the primary provider, Stable Diffusion through Replicate as an optional fallback, and a deterministic offline renderer that requires no API credits.
+The pipeline owns the 60 raster assets used by the landing page. It supports the configured OpenAI image model, Stable Diffusion through Replicate as an optional fallback, and a deterministic offline renderer that requires no API credits.
 
 The separate 11 feature and enterprise icons are deterministic SVGs in `assets/icons/`; they are intentionally not sent to an image model.
 
 ## Setup
 
-Requirements: Node.js 18 or newer.
+Requirements: Node.js 22.
 
 ```powershell
 npm install

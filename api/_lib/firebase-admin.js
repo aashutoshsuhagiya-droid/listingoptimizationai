@@ -1,5 +1,6 @@
 'use strict';
 
+const { createHash } = require('crypto');
 const { cert, getApps, initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 const { FieldValue, getFirestore, Timestamp } = require('firebase-admin/firestore');
@@ -39,13 +40,38 @@ async function verifyFirebaseUser(request) {
   const match = /^Bearer\s+(.+)$/i.exec(header);
   if (!match) throw new ApiError(401, 'AUTH_REQUIRED', 'Sign in before generating images.');
 
+  let decodedToken;
   try {
     const app = getAdminApp();
-    return await getAuth(app).verifyIdToken(match[1], true);
+    decodedToken = await getAuth(app).verifyIdToken(match[1], true);
   } catch (error) {
     if (error instanceof ApiError) throw error;
-    throw new ApiError(401, 'INVALID_AUTH_TOKEN', 'Your session expired. Sign in again.');
+    const invalidTokenCodes = new Set([
+      'auth/argument-error',
+      'auth/id-token-expired',
+      'auth/id-token-revoked',
+      'auth/invalid-id-token',
+      'auth/user-disabled',
+      'auth/user-not-found'
+    ]);
+    if (invalidTokenCodes.has(error?.code)) {
+      throw new ApiError(401, 'INVALID_AUTH_TOKEN', 'Your session expired. Sign in again.');
+    }
+    throw new ApiError(503, 'AUTH_SERVICE_UNAVAILABLE', 'Authentication could not be verified right now. Please try again.');
   }
+
+  if (process.env.REQUIRE_VERIFIED_EMAIL !== 'false' && decodedToken.email_verified !== true) {
+    throw new ApiError(403, 'EMAIL_VERIFICATION_REQUIRED', 'Verify your email address before using paid image tools.');
+  }
+  if (
+    process.env.REQUIRE_GENERATION_ENTITLEMENT !== 'false' &&
+    decodedToken.generationAccess !== true &&
+    decodedToken.admin !== true
+  ) {
+    throw new ApiError(403, 'GENERATION_ACCESS_REQUIRED', 'Your account does not have image-generation access yet.');
+  }
+
+  return decodedToken;
 }
 
 function clampInteger(value, fallback, minimum, maximum) {
@@ -54,59 +80,135 @@ function clampInteger(value, fallback, minimum, maximum) {
   return Math.max(minimum, Math.min(maximum, parsed));
 }
 
-function dailyUsageReference(uid) {
-  const date = new Date().toISOString().slice(0, 10);
-  const safeUid = String(uid).replace(/[^a-zA-Z0-9_-]/g, '');
-  return getFirestore(getAdminApp()).collection('generationUsage').doc(`${safeUid}_${date}`);
+function requiredPositiveInteger(name, maximum) {
+  const raw = requiredEnvironment(name);
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed < 1 || String(parsed) !== String(raw).trim()) {
+    throw new ApiError(503, 'SERVICE_NOT_CONFIGURED', `Server configuration must be a positive integer: ${name}`);
+  }
+  return Math.min(maximum, parsed);
 }
 
-async function reserveGeneration(uid) {
-  const maximum = clampInteger(process.env.MAX_DAILY_GENERATIONS, 6, 1, 500);
-  const cooldownSeconds = clampInteger(process.env.GENERATION_COOLDOWN_SECONDS, 5, 0, 300);
+function dailyUsageReference(uid) {
+  const date = new Date().toISOString().slice(0, 10);
+  const uidHash = createHash('sha256').update(String(uid)).digest('hex').slice(0, 48);
+  return getFirestore(getAdminApp()).collection('generationUsage').doc(`${uidHash}_${date}`);
+}
+
+function globalUsageReference() {
+  const date = new Date().toISOString().slice(0, 10);
+  return getFirestore(getAdminApp()).collection('generationUsage').doc(`_global_${date}`);
+}
+
+const USAGE_TYPES = {
+  generation: {
+    countField: 'count',
+    lastRequestField: 'lastRequestAt',
+    maximumEnvironment: 'MAX_DAILY_GENERATIONS',
+    maximumFallback: 6,
+    globalMaximumEnvironment: 'MAX_DAILY_GLOBAL_GENERATIONS',
+    cooldownEnvironment: 'GENERATION_COOLDOWN_SECONDS',
+    cooldownFallback: 5,
+    limitCode: 'DAILY_LIMIT_REACHED',
+    rateCode: 'RATE_LIMITED',
+    label: 'generation'
+  },
+  preparation: {
+    countField: 'preparationCount',
+    lastRequestField: 'lastPreparationAt',
+    maximumEnvironment: 'MAX_DAILY_PRODUCT_PREPARATIONS',
+    maximumFallback: 10,
+    globalMaximumEnvironment: 'MAX_DAILY_GLOBAL_PRODUCT_PREPARATIONS',
+    cooldownEnvironment: 'PRODUCT_PREPARATION_COOLDOWN_SECONDS',
+    cooldownFallback: 3,
+    limitCode: 'DAILY_PREPARATION_LIMIT_REACHED',
+    rateCode: 'PREPARATION_RATE_LIMITED',
+    label: 'product preparation'
+  }
+};
+
+async function reserveUsage(uid, type) {
+  const configuration = USAGE_TYPES[type];
+  if (!configuration) throw new Error(`Unsupported usage type: ${type}`);
+
+  const maximum = clampInteger(
+    process.env[configuration.maximumEnvironment],
+    configuration.maximumFallback,
+    1,
+    500
+  );
+  const cooldownSeconds = clampInteger(
+    process.env[configuration.cooldownEnvironment],
+    configuration.cooldownFallback,
+    0,
+    300
+  );
+  const globalMaximum = requiredPositiveInteger(configuration.globalMaximumEnvironment, 1_000_000);
   const reference = dailyUsageReference(uid);
+  const globalReference = globalUsageReference();
   const database = reference.firestore;
 
   await database.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(reference);
+    const [snapshot, globalSnapshot] = await Promise.all([
+      transaction.get(reference),
+      transaction.get(globalReference)
+    ]);
     const data = snapshot.exists ? snapshot.data() : {};
-    const currentCount = Number(data.count || 0);
-    const lastRequest = data.lastRequestAt?.toMillis?.() || 0;
+    const currentCount = Number(data[configuration.countField] || 0);
+    const lastRequest = data[configuration.lastRequestField]?.toMillis?.() || 0;
     const elapsed = Date.now() - lastRequest;
 
     if (currentCount >= maximum) {
-      throw new ApiError(429, 'DAILY_LIMIT_REACHED', `Daily generation limit reached (${maximum}).`);
+      throw new ApiError(
+        429,
+        configuration.limitCode,
+        `Daily ${configuration.label} limit reached (${maximum}).`
+      );
+    }
+    const globalCount = Number(globalSnapshot?.data()?.[configuration.countField] || 0);
+    if (globalCount >= globalMaximum) {
+      throw new ApiError(
+        429,
+        'GLOBAL_DAILY_LIMIT_REACHED',
+        'The image service has reached its daily capacity. Please try again tomorrow.'
+      );
     }
     if (cooldownSeconds && lastRequest && elapsed < cooldownSeconds * 1000) {
-      throw new ApiError(429, 'RATE_LIMITED', `Wait ${Math.ceil((cooldownSeconds * 1000 - elapsed) / 1000)} seconds before generating again.`);
+      throw new ApiError(
+        429,
+        configuration.rateCode,
+        `Wait ${Math.ceil((cooldownSeconds * 1000 - elapsed) / 1000)} seconds before trying again.`
+      );
     }
 
     transaction.set(reference, {
       uid,
       date: new Date().toISOString().slice(0, 10),
-      count: currentCount + 1,
-      lastRequestAt: Timestamp.now(),
+      [configuration.countField]: currentCount + 1,
+      [configuration.lastRequestField]: Timestamp.now(),
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true });
+    transaction.set(globalReference, {
+      date: new Date().toISOString().slice(0, 10),
+      [configuration.countField]: globalCount + 1,
       updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
   });
 
-  return { reference, maximum };
+  return { maximum, type };
 }
 
-async function releaseGeneration(reservation) {
-  if (!reservation?.reference) return;
-  try {
-    await reservation.reference.update({
-      count: FieldValue.increment(-1),
-      updatedAt: FieldValue.serverTimestamp()
-    });
-  } catch {
-    // Quota reconciliation must never hide the original provider error.
-  }
+function reserveGeneration(uid) {
+  return reserveUsage(uid, 'generation');
+}
+
+function reserveProductPreparation(uid) {
+  return reserveUsage(uid, 'preparation');
 }
 
 module.exports = {
   ApiError,
-  releaseGeneration,
   reserveGeneration,
+  reserveProductPreparation,
   verifyFirebaseUser
 };

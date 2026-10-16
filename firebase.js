@@ -19,8 +19,11 @@ const Auth = {
     try {
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
       await userCredential.user.updateProfile({ displayName: name });
-      return { success: true, user: userCredential.user };
+      await userCredential.user.sendEmailVerification();
+      await firebase.auth().signOut();
+      return { success: true, verificationRequired: true };
     } catch (error) {
+      try { await firebase.auth().signOut(); } catch { /* No active session to clear. */ }
       return { success: false, error: error.message };
     }
   },
@@ -29,6 +32,12 @@ const Auth = {
   async login(email, password) {
     try {
       const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const usesPassword = userCredential.user.providerData.some((provider) => provider.providerId === 'password');
+      if (usesPassword && !userCredential.user.emailVerified) {
+        try { await userCredential.user.sendEmailVerification(); } catch { /* Firebase may rate-limit repeat emails. */ }
+        await firebase.auth().signOut();
+        return { success: false, error: 'Verify your email before signing in. We sent a new link when allowed.' };
+      }
       return { success: true, user: userCredential.user };
     } catch (error) {
       return { success: false, error: error.message };

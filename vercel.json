@@ -2,6 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/generate-infographic.js": {
+      "maxDuration": 300
+    },
+    "api/prepare-product.js": {
       "maxDuration": 120
     }
   }

@@ -2,26 +2,20 @@
 
 const { randomUUID } = require('crypto');
 const OpenAI = require('openai');
-const { toFile } = require('openai');
-const sharp = require('sharp');
 
 const {
   ApiError,
-  releaseGeneration,
   reserveGeneration,
   verifyFirebaseUser
 } = require('./_lib/firebase-admin');
 const {
-  buildImageEditPrompt,
-  outputSizeFor,
+  backgroundSizeFor,
+  buildBackgroundPrompt,
   validateCreativeBrief
 } = require('./_lib/prompt');
 
-const MAX_REQUEST_BYTES = 3.8 * 1024 * 1024;
-const MAX_IMAGES = 3;
-const MAX_IMAGE_BYTES = 900 * 1024;
-const MAX_COMBINED_IMAGE_BYTES = 2.5 * 1024 * 1024;
-const ACCEPTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MAX_REQUEST_BYTES = 96 * 1024;
+const MAX_BACKGROUND_BYTES = 2_750_000;
 
 function respond(response, status, body) {
   response.setHeader('Cache-Control', 'no-store, max-age=0');
@@ -42,75 +36,79 @@ function parseRequestBody(request) {
   return request.body;
 }
 
-function decodeImage(dataUrl, index) {
-  if (typeof dataUrl !== 'string') {
-    throw new ApiError(400, 'INVALID_IMAGE', `Product image ${index + 1} is invalid.`);
+async function imagePayload(result) {
+  if (result?.b64_json) {
+    if (Buffer.byteLength(result.b64_json, 'base64') > MAX_BACKGROUND_BYTES) {
+      throw new ApiError(502, 'BACKGROUND_TOO_LARGE', 'The generated background was too large to deliver safely. Please retry.');
+    }
+    return result.b64_json;
   }
+  if (result?.url) {
+    let sourceUrl;
+    try { sourceUrl = new URL(result.url); }
+    catch { throw new Error('Generated background URL was invalid.'); }
+    if (sourceUrl.protocol !== 'https:') throw new Error('Generated background URL was not secure.');
 
-  const match = /^data:(image\/(?:jpeg|png|webp));base64,([a-zA-Z0-9+/=\r\n]+)$/.exec(dataUrl);
-  if (!match || !ACCEPTED_MIME_TYPES.has(match[1])) {
-    throw new ApiError(400, 'INVALID_IMAGE', `Product image ${index + 1} must be a JPG, PNG, or WebP data URL.`);
-  }
-
-  const buffer = Buffer.from(match[2], 'base64');
-  if (!buffer.length || buffer.length > MAX_IMAGE_BYTES) {
-    throw new ApiError(413, 'IMAGE_TOO_LARGE', `Product image ${index + 1} is too large after optimization.`);
-  }
-  return buffer;
-}
-
-async function normalizeImage(buffer, index) {
-  try {
-    const pipeline = sharp(buffer, {
-      failOn: 'warning',
-      limitInputPixels: 40_000_000
-    });
-    const metadata = await pipeline.metadata();
-    if (!metadata.width || !metadata.height) throw new Error('Missing image dimensions');
-    if (metadata.width < 256 || metadata.height < 256) {
-      throw new ApiError(400, 'IMAGE_TOO_SMALL', `Product image ${index + 1} must be at least 256 × 256 pixels.`);
+    const providerResponse = await fetch(sourceUrl, { signal: AbortSignal.timeout(25_000) });
+    if (!providerResponse.ok) {
+      throw new Error(`Generated background download failed (${providerResponse.status})`);
+    }
+    const declaredLength = Number(providerResponse.headers.get('content-length') || 0);
+    if (declaredLength > MAX_BACKGROUND_BYTES) {
+      throw new ApiError(502, 'BACKGROUND_TOO_LARGE', 'The generated background was too large to deliver safely. Please retry.');
     }
 
-    return await pipeline
-      .rotate()
-      .flatten({ background: '#ffffff' })
-      .resize({
-        width: 1536,
-        height: 1536,
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .jpeg({ quality: 90, chromaSubsampling: '4:4:4' })
-      .toBuffer();
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
-    throw new ApiError(400, 'INVALID_IMAGE', `Product image ${index + 1} could not be processed.`);
-  }
-}
+    const reader = providerResponse.body?.getReader?.();
+    if (!reader) {
+      const fallback = Buffer.from(await providerResponse.arrayBuffer());
+      if (fallback.length > MAX_BACKGROUND_BYTES) {
+        throw new ApiError(502, 'BACKGROUND_TOO_LARGE', 'The generated background was too large to deliver safely. Please retry.');
+      }
+      return fallback.toString('base64');
+    }
 
-async function imagePayload(result) {
-  if (result?.b64_json) return result.b64_json;
-  if (result?.url) {
-    const response = await fetch(result.url);
-    if (!response.ok) throw new Error(`Generated image download failed (${response.status})`);
-    return Buffer.from(await response.arrayBuffer()).toString('base64');
+    const chunks = [];
+    let total = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > MAX_BACKGROUND_BYTES) {
+        await reader.cancel();
+        throw new ApiError(502, 'BACKGROUND_TOO_LARGE', 'The generated background was too large to deliver safely. Please retry.');
+      }
+      chunks.push(Buffer.from(value));
+    }
+    return Buffer.concat(chunks, total).toString('base64');
   }
-  throw new Error('Image provider returned no image payload.');
+  throw new Error('Image provider returned no background payload.');
 }
 
 function providerError(error) {
   if (error?.status === 429) {
-    return new ApiError(429, 'PROVIDER_RATE_LIMITED', 'The image service is busy. Please wait a moment and try again.');
+    return new ApiError(429, 'PROVIDER_RATE_LIMITED', 'The background service is busy. Please wait and try again.');
   }
   if (error?.status === 400 || error?.status === 422) {
-    return new ApiError(400, 'GENERATION_REJECTED', 'The image service could not generate this request. Check the uploaded image and product brief.');
+    return new ApiError(400, 'GENERATION_REJECTED', 'The background service could not generate this creative direction. Review the product brief and try again.');
   }
-  return new ApiError(502, 'GENERATION_FAILED', 'The image service did not complete the creative. Please try again.');
+  if (error?.name === 'TimeoutError' || error?.name === 'AbortError') {
+    return new ApiError(504, 'GENERATION_TIMEOUT', 'Background generation timed out. Please try again.');
+  }
+  return new ApiError(502, 'GENERATION_FAILED', 'The background service did not complete the creative. Please try again.');
+}
+
+function outputCompression() {
+  const parsed = Number.parseInt(process.env.OPENAI_OUTPUT_COMPRESSION, 10);
+  if (!Number.isFinite(parsed)) return 90;
+  return Math.max(75, Math.min(95, parsed));
+}
+
+function outputFormat() {
+  return process.env.OPENAI_OUTPUT_FORMAT === 'jpeg' ? 'jpeg' : 'webp';
 }
 
 module.exports = async function generateInfographic(request, response) {
   const requestId = randomUUID();
-  let reservation;
 
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
@@ -120,18 +118,18 @@ module.exports = async function generateInfographic(request, response) {
   try {
     const contentLength = Number(request.headers['content-length'] || 0);
     if (contentLength > MAX_REQUEST_BYTES) {
-      throw new ApiError(413, 'REQUEST_TOO_LARGE', 'Upload fewer or smaller product images.');
+      throw new ApiError(413, 'REQUEST_TOO_LARGE', 'The creative brief is unexpectedly large.');
     }
     const contentType = String(request.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
     if (contentType && contentType !== 'application/json') {
       throw new ApiError(415, 'UNSUPPORTED_MEDIA_TYPE', 'Use an application/json request body.');
     }
 
+    const user = await verifyFirebaseUser(request);
     if (!process.env.OPENAI_API_KEY) {
-      throw new ApiError(503, 'SERVICE_NOT_CONFIGURED', 'Image generation is not configured.');
+      throw new ApiError(503, 'SERVICE_NOT_CONFIGURED', 'Background generation is not configured.');
     }
 
-    const user = await verifyFirebaseUser(request);
     const body = parseRequestBody(request);
     let brief;
     try {
@@ -139,59 +137,54 @@ module.exports = async function generateInfographic(request, response) {
     } catch (error) {
       throw new ApiError(400, 'INVALID_BRIEF', error?.message || 'The creative brief is invalid.');
     }
-
-    if (!Array.isArray(body.images) || body.images.length < 1 || body.images.length > MAX_IMAGES) {
-      throw new ApiError(400, 'INVALID_IMAGES', `Upload between 1 and ${MAX_IMAGES} product images.`);
+    if (brief.template === 'marketplace-main') {
+      throw new ApiError(400, 'BACKGROUND_NOT_REQUIRED', 'Marketplace Main is composed locally without an AI background.');
     }
 
-    const decoded = body.images.map(decodeImage);
-    const totalBytes = decoded.reduce((sum, buffer) => sum + buffer.length, 0);
-    if (totalBytes > MAX_COMBINED_IMAGE_BYTES) {
-      throw new ApiError(413, 'REQUEST_TOO_LARGE', 'The combined product images are too large.');
-    }
-
-    reservation = await reserveGeneration(user.uid);
-
-    const normalized = await Promise.all(decoded.map(normalizeImage));
-    const uploads = await Promise.all(normalized.map((buffer, index) => (
-      toFile(buffer, `product-reference-${index + 1}.jpg`, { type: 'image/jpeg' })
-    )));
+    await reserveGeneration(user.uid);
 
     const client = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      maxRetries: 1,
-      timeout: 110_000
+      maxRetries: 0,
+      timeout: 240_000
     });
     const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-2';
     const quality = ['low', 'medium', 'high', 'auto'].includes(process.env.OPENAI_IMAGE_QUALITY)
       ? process.env.OPENAI_IMAGE_QUALITY
       : 'high';
+    const size = backgroundSizeFor(brief.canvasFormat, brief.template);
+    const format = outputFormat();
 
     let generation;
     try {
-      generation = await client.images.edit({
+      generation = await client.images.generate({
         model,
-        image: uploads.length === 1 ? uploads[0] : uploads,
-        prompt: buildImageEditPrompt(brief, uploads.length),
+        prompt: buildBackgroundPrompt(brief),
         n: 1,
-        size: outputSizeFor(brief.canvasFormat, brief.template),
+        size,
         quality,
-        output_format: 'jpeg',
-        output_compression: 86
+        output_format: format,
+        output_compression: outputCompression()
       });
     } catch (error) {
       throw providerError(error);
     }
 
-    const encoded = await imagePayload(generation.data?.[0]);
+    let encoded;
+    try {
+      encoded = await imagePayload(generation.data?.[0]);
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      throw providerError(error);
+    }
     return respond(response, 200, {
-      image: `data:image/jpeg;base64,${encoded}`,
+      background: `data:image/${format};base64,${encoded}`,
       template: brief.template,
       model,
+      size,
       requestId
     });
   } catch (error) {
-    if (reservation) await releaseGeneration(reservation);
     const safeError = error instanceof ApiError
       ? error
       : new ApiError(500, 'INTERNAL_ERROR', 'The generation request could not be completed.');

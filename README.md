@@ -7,19 +7,21 @@ A responsive SaaS marketing site plus an authenticated product-infographic studi
 Authenticated customers can use `dashboard.html` to:
 
 - upload one to three raw product photographs;
+- select the strongest primary angle and turn it into a transparent, product-locked cutout;
+- inspect and approve that cutout before paid background generation begins;
 - enter verified product benefits and exact infographic copy;
 - choose Feature, Benefit, Lifestyle, or Marketplace Main concepts;
-- generate product-reference-based scenes through a server-only image API;
-- apply exact, deterministic typography in the browser; and
-- review and download finished JPG creatives.
+- generate product-free 2K scenes through a server-only image API;
+- composite the non-generatively-redrawn product cutout, natural shadows, and exact typography in the browser; and
+- review and download 2000px JPG creatives.
 
-The OpenAI key is never sent to the browser. Firebase Admin verifies each user, Firestore enforces per-user daily limits, uploaded images are resized before transport, and generated images are returned without being permanently stored by this codebase.
+OpenAI and PhotoRoom keys are never sent to the browser. Firebase Admin requires a verified user and, unless explicitly disabled for setup, a paid custom-claim entitlement; Firestore enforces required per-user and global cutout/generation limits. Uploaded images are resized before transport, and image bytes are returned without being permanently stored by this codebase. OpenAI receives the creative brief but not the customer product photo.
 
 See [`GENERATION_SETUP.md`](GENERATION_SETUP.md) before deploying the generator.
 
 ## Run locally
 
-Open `index.html` directly, or serve the folder with any static server:
+Use Node.js 22. Open `index.html` directly, or serve the folder with any static server:
 
 ```powershell
 npx serve .

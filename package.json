@@ -8,16 +8,17 @@
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check dashboard.js && node --check api/generate-infographic.js && node --check api/_lib/firebase-admin.js && node --check api/_lib/prompt.js",
+    "check": "node --check dashboard.js && node --check firebase.js && node --check scripts/set-generation-access.js && node --check api/generate-infographic.js && node --check api/prepare-product.js && node --check api/_lib/firebase-admin.js && node --check api/_lib/photoroom.js && node --check api/_lib/prompt.js && node tests/prompt.test.js && node tests/architecture.test.js",
     "images:dry-run": "node scripts/generate-images.js --dry-run",
     "images:generate": "node scripts/generate-images.js --all",
     "images:fallback": "node scripts/generate-images.js --all --fallback",
-    "images:validate": "node scripts/generate-images.js --validate"
+    "images:validate": "node scripts/generate-images.js --validate",
+    "access:set": "node scripts/set-generation-access.js"
   },
   "dependencies": {
-    "dotenv": "^17.0.0",
-    "firebase-admin": "^13.0.0",
-    "openai": "^6.0.0",
-    "sharp": "^0.34.0"
+    "dotenv": "17.0.0",
+    "firebase-admin": "13.0.0",
+    "openai": "6.0.0",
+    "sharp": "0.34.0"
   }
 }

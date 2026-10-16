@@ -43,11 +43,11 @@
         <div>
           <p class="studio-kicker">AI PRODUCT CREATIVE STUDIO</p>
           <h1 id="studio-title">Turn raw product photos into conversion-ready creatives.</h1>
-          <p>Upload your real product, add verified selling points, and generate polished marketplace images while keeping every headline under your control.</p>
+          <p>Upload your real product, preserve its original photographed appearance, and generate polished 2K marketplace infographics with every headline under your control.</p>
         </div>
         <div class="studio-assurances" aria-label="Generation safeguards">
-          <span>✓ Product-reference workflow</span>
-          <span>✓ Exact text rendered separately</span>
+          <span>✓ Original product layer preserved</span>
+          <span>✓ No AI-written copy</span>
           <span>✓ Private server-side API key</span>
         </div>
       </section>
@@ -56,14 +56,14 @@
         <aside class="workflow-sidebar" aria-label="Creative workflow">
           <p class="sidebar-label">YOUR WORKFLOW</p>
           <ol>
-            <li class="is-active" data-nav-step="1"><span>1</span><div><strong>Product photos</strong><small>Add up to three clear angles</small></div></li>
+            <li class="is-active" data-nav-step="1"><span>1</span><div><strong>Product photos</strong><small>Select one primary angle</small></div></li>
             <li data-nav-step="2"><span>2</span><div><strong>Product brief</strong><small>Only verified facts and benefits</small></div></li>
             <li data-nav-step="3"><span>3</span><div><strong>Creative direction</strong><small>Choose up to three concepts</small></div></li>
-            <li data-nav-step="4"><span>4</span><div><strong>Generate & export</strong><small>Review and download JPG files</small></div></li>
+            <li data-nav-step="4"><span>4</span><div><strong>Generate & export</strong><small>Review 2000px JPG files</small></div></li>
           </ol>
           <div class="sidebar-note">
-            <strong>Why text stays accurate</strong>
-            <p>AI creates the scene. Your approved headline and benefits are added afterward with deterministic typography, avoiding misspelled AI text.</p>
+            <strong>Why the product stays accurate</strong>
+            <p>The original product is cut out once and composited unchanged. AI creates only the empty scene; approved copy is rendered separately.</p>
           </div>
         </aside>
 
@@ -80,7 +80,7 @@
             <section class="form-step" data-step="1" aria-labelledby="upload-title">
               <div class="step-heading">
                 <span>01</span>
-                <div><h3 id="upload-title">Upload original product photos</h3><p>Use a clean, well-lit front view first. Additional angles help preserve shape and packaging; a plain background gives the best label fidelity.</p></div>
+                <div><h3 id="upload-title">Upload original product photos</h3><p>The first image is your locked product layer. Add other angles if needed, then click “Use” to choose the strongest primary view.</p></div>
               </div>
 
               <label id="upload-zone" class="upload-zone" for="product-images" tabindex="0">
@@ -89,8 +89,8 @@
                   <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
                 </span>
                 <strong>Drop product photos here</strong>
-                <small>or click to browse · JPG, PNG or WebP · maximum 3 images</small>
-                <em>Primary photo should clearly show the exact packaging and label.</em>
+                <small>or click to browse · JPG, PNG or WebP · 1500px recommended · maximum 3 images</small>
+                <em>A sharp front view on a simple background produces the cleanest cutout.</em>
               </label>
               <div id="upload-error" class="field-error" role="alert"></div>
               <div id="upload-previews" class="upload-previews" aria-live="polite"></div>
@@ -99,17 +99,17 @@
             <section class="form-step" data-step="2" aria-labelledby="brief-title">
               <div class="step-heading">
                 <span>02</span>
-                <div><h3 id="brief-title">Add the verified product brief</h3><p>This information guides the scene and becomes the exact copy placed on your final infographic.</p></div>
+                <div><h3 id="brief-title">Add the verified product brief</h3><p>Category and audience guide the scene; your headline and benefits are rendered separately as approved copy on infographic concepts.</p></div>
               </div>
 
               <div class="field-grid">
                 <label class="field">
                   <span>Product name <b>*</b></span>
-                  <input id="product-name" name="productName" type="text" maxlength="80" placeholder="e.g. Hydrating Vitamin C Serum" required>
+                  <input id="product-name" name="productName" type="text" maxlength="60" placeholder="e.g. Hydrating Vitamin C Serum" required>
                 </label>
                 <label class="field">
-                  <span>Category <b>*</b></span>
-                  <input id="product-category" name="category" type="text" maxlength="60" placeholder="e.g. Skincare" required>
+                  <span>Category <small>Required for infographic concepts</small></span>
+                  <input id="product-category" name="category" type="text" maxlength="40" placeholder="e.g. Skincare">
                 </label>
                 <label class="field">
                   <span>Target customer</span>
@@ -128,8 +128,8 @@
               </div>
 
               <label class="field field-wide">
-                <span>Verified benefits <b>*</b> <small>One benefit per line, maximum 3</small></span>
-                <textarea id="product-benefits" name="benefits" rows="4" maxlength="360" placeholder="Deep hydration without a greasy feel&#10;Brightens the appearance of dull skin&#10;Lightweight daily formula" required></textarea>
+                <span>Verified benefits <small>Required for infographics · max 3 lines · 60 characters each</small></span>
+                <textarea id="product-benefits" name="benefits" rows="4" maxlength="182" placeholder="Deep hydration without a greasy feel&#10;Brightens the appearance of dull skin&#10;Lightweight daily formula"></textarea>
               </label>
 
               <div class="field-grid">
@@ -139,7 +139,7 @@
                 </label>
                 <label class="field">
                   <span>Supporting line</span>
-                  <input id="creative-subheadline" name="subheadline" type="text" maxlength="100" placeholder="Your strongest verified benefit">
+                  <input id="creative-subheadline" name="subheadline" type="text" maxlength="90" placeholder="Your strongest verified benefit">
                 </label>
               </div>
               <div id="brief-error" class="field-error" role="alert"></div>
@@ -174,7 +174,7 @@
                   <input type="checkbox" name="templates" value="marketplace-main">
                   <span class="template-visual main-visual"><i></i><b>04</b></span>
                   <strong>Marketplace Main</strong>
-                  <small>Clean white-background product image; automatically generated square.</small>
+                  <small>Original product cutout on pure white; square and marketplace-ready.</small>
                 </label>
               </div>
               <p id="template-count" class="selection-count">1 of 3 concepts selected</p>
@@ -213,7 +213,7 @@
             <div class="generate-bar">
               <div>
                 <strong>Ready to create?</strong>
-                <small>Paid AI generation takes 30–90 seconds per concept. Compressed references are sent to the configured image provider and are not stored by this app.</small>
+                <small>Opaque primary photos are sent to PhotoRoom for background removal; transparent uploads bypass it. AI receives the brief only and creates a product-free scene. Images are not stored by this app.</small>
               </div>
               <button id="generate-btn" class="btn btn-primary generate-submit" type="submit">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Zm6 11 .9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9L18 14Z"/></svg>
@@ -222,12 +222,23 @@
             </div>
           </form>
 
-          <div id="generation-progress" class="generation-progress" hidden aria-live="polite">
+          <div id="generation-progress" class="generation-progress" hidden aria-live="polite" role="status">
             <div class="progress-orbit"><span></span><i></i></div>
             <div>
               <strong id="progress-title">Preparing your product references…</strong>
               <p id="progress-message">Optimizing uploads securely in your browser.</p>
-              <div class="progress-track"><span id="progress-bar"></span></div>
+              <div id="progress-track" class="progress-track" role="progressbar" aria-label="Generation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-bar"></span></div>
+            </div>
+            <div id="cutout-review" class="cutout-review" hidden>
+              <div class="cutout-preview"><img id="cutout-preview-image" alt="Prepared transparent product cutout"></div>
+              <div>
+                <strong>Check the product edges before paid generation</strong>
+                <p>Confirm that the label, shape, and packaging are intact. Choose another primary image if anything is missing.</p>
+                <div class="cutout-review-actions">
+                  <button id="reject-cutout-btn" type="button">Choose another photo</button>
+                  <button id="approve-cutout-btn" class="primary" type="button">Looks correct — continue</button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -241,7 +252,7 @@
         <div id="results-empty" class="results-empty">
           <span aria-hidden="true">✦</span>
           <strong>Your generated images will appear here</strong>
-          <p>Complete the project brief above to create your first marketplace-ready set.</p>
+          <p>Complete the project brief above to create your first product-locked 2000px set.</p>
         </div>
         <div id="results-grid" class="results-grid" aria-live="polite"></div>
       </section>

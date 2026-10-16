@@ -16,6 +16,10 @@ node_modules/
 .env
 .env.*
 !.env.example
+*service-account*.json
+*serviceAccount*.json
+*firebase-adminsdk-*.json
+google-credentials*.json
 
 # Editor directories
 .vscode/

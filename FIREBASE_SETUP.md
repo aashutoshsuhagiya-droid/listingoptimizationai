@@ -20,6 +20,7 @@
    - Toggle "Enable"
    - Select a support email from the dropdown
    - Click "Save"
+6. Open **Settings → Authorized domains** and add your Vercel production domain, custom domains, and local test domain.
 
 ## Step 3: Get Firebase Config
 1. Go to **Project Settings** (gear icon)
@@ -41,11 +42,25 @@ const firebaseConfig = {
 };
 ```
 
-## Step 4: Deploy and Test
-1. Push changes to GitHub: `git add . && git commit -m "Add Firebase auth" && git push`
-2. Vercel/Netlify will auto-deploy
-3. Visit `/login.html` or `/signup.html`
-4. Test signup, login, and logout
+## Step 4: Lock Firestore
+
+The quota collection is server-owned. Deploy the included deny-by-default rules:
+
+```powershell
+npx.cmd firebase-tools login
+npx.cmd firebase-tools deploy --only firestore:rules --project listing-optimization-ai
+```
+
+Do not use Firestore test-mode rules in production.
+
+## Step 5: Deploy and Test
+
+1. Keep service-account JSON files outside the repository; `.gitignore` also blocks common credential filenames.
+2. Stage only reviewed files, for example: `git add firebase.js firebase.json firestore.rules login.html signup.html dashboard.html`.
+3. Commit and push to GitHub; deploy this full project to Vercel because the generator requires `/api` serverless functions.
+4. Add the Vercel/custom domain under Firebase Auth **Authorized domains**.
+5. Visit `/signup.html`, create an email account, follow the verification email, then test login and logout.
+6. Test Google sign-in and confirm an unverified account cannot call paid APIs.
 
 ## Files Created
 - `firebase.js` - Firebase configuration and auth helpers
@@ -60,11 +75,12 @@ const firebaseConfig = {
 - Protected dashboard (redirects to login if not authenticated)
 - Logout functionality
 - Session persistence
+- Email verification before paid generation
 - Error handling with user-friendly messages
+- Manual generation-access provisioning with `npm.cmd run access:set -- <email-or-uid> grant`
 
 ## Next Steps
 - Update navigation links in `index.html` (already done)
-- Add Firebase Hosting for better performance
 - Customize auth UI to match your brand
 - Add password reset functionality
-- Add email verification
+- Automate the same `generationAccess` custom claim from your billing webhook after validating the manual provisioning flow

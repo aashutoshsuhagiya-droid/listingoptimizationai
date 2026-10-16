@@ -162,6 +162,8 @@ body.is-auth-loading { overflow: hidden; }
   padding: 54px 0 90px;
 }
 
+.dashboard-shell section { padding: 0; }
+
 .studio-intro {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -347,6 +349,12 @@ body.is-auth-loading { overflow: hidden; }
   color: var(--studio-red);
 }
 
+.project-status.is-error {
+  border-color: rgba(178, 34, 52, .3);
+  background: #fff3f4;
+  color: var(--studio-red);
+}
+
 .form-step { padding: 34px; border-bottom: 1px solid #ecebf0; }
 
 .step-heading {
@@ -460,10 +468,17 @@ body.is-auth-loading { overflow: hidden; }
 }
 
 .upload-preview footer div { min-width: 0; }
+.upload-file-copy { flex: 1 1 auto; }
+.upload-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
 .upload-preview footer strong,
 .upload-preview footer small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .upload-preview footer strong { font-size: 8px; }
-.upload-preview footer small { margin-top: 3px; color: #999ba8; font-size: 7px; }
+.upload-preview footer small { margin-top: 3px; color: #666979; font-size: 9px; }
 
 .preview-primary {
   position: absolute;
@@ -491,6 +506,20 @@ body.is-auth-loading { overflow: hidden; }
 
 .remove-upload:hover { border-color: var(--studio-red); color: var(--studio-red); }
 
+.make-primary {
+  min-height: 25px;
+  padding: 0 9px;
+  border: 1px solid rgba(178, 34, 52, .28);
+  border-radius: 999px;
+  background: #fff7f8;
+  color: var(--studio-red);
+  font-size: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.make-primary:hover { border-color: var(--studio-red); background: #fff; }
+
 .field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -513,7 +542,7 @@ body.is-auth-loading { overflow: hidden; }
 .field-wide > span b { color: var(--studio-red); }
 
 .field > span small,
-.field-wide > span small { margin-left: 6px; color: #989aa8; font-size: 7px; font-weight: 500; }
+.field-wide > span small { margin-left: 6px; color: #666979; font-size: 8px; font-weight: 600; }
 
 .field input:not([type="color"]),
 .field select,
@@ -735,6 +764,69 @@ body.is-auth-loading { overflow: hidden; }
   transition: width .45s ease;
 }
 
+.cutout-review {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 22px;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .07);
+}
+
+.cutout-review[hidden] { display: none; }
+
+.cutout-preview {
+  height: 150px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 9px;
+  background-color: #f2f2f4;
+  background-image:
+    linear-gradient(45deg, #d9dae0 25%, transparent 25%),
+    linear-gradient(-45deg, #d9dae0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #d9dae0 75%),
+    linear-gradient(-45deg, transparent 75%, #d9dae0 75%);
+  background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+  background-size: 18px 18px;
+}
+
+.cutout-preview img {
+  max-width: 92%;
+  max-height: 138px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 10px rgba(23, 24, 56, .18));
+}
+
+.cutout-review p { max-width: 620px; }
+
+.cutout-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.cutout-review-actions button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 7px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.cutout-review-actions button.primary {
+  border-color: var(--studio-red);
+  background: var(--studio-red);
+}
+
 .results-section { margin-top: 25px; padding: 32px; }
 .results-heading { margin-bottom: 23px; }
 .results-download-all { width: auto; min-height: 40px; cursor: pointer; }
@@ -872,6 +964,9 @@ body.is-auth-loading { overflow: hidden; }
   .progress-orbit { width: 52px; height: 52px; }
   .progress-orbit span { left: 22px; transform-origin: 4px 30px; }
   .progress-orbit i { left: 22px; top: 48px; transform-origin: 4px -22px; }
+  .cutout-review { grid-template-columns: 1fr; }
+  .cutout-preview { height: 190px; }
+  .cutout-preview img { max-height: 175px; }
 }
 
 @media (max-width: 460px) {

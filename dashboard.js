@@ -3,9 +3,13 @@
 
   const MAX_FILES = 3;
   const MAX_FILE_BYTES = 12 * 1024 * 1024;
-  const MAX_OPTIMIZED_IMAGE_BYTES = 820 * 1024;
-  const MAX_COMBINED_IMAGE_BYTES = 2.35 * 1024 * 1024;
+  const MAX_OPTIMIZED_IMAGE_BYTES = 1.15 * 1024 * 1024;
   const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+  const FINAL_SIZES = {
+    landscape: { width: 2000, height: 1334 },
+    square: { width: 2000, height: 2000 },
+    portrait: { width: 1334, height: 2000 }
+  };
   const TEMPLATE_LABELS = {
     'feature-spotlight': 'Feature Spotlight',
     'benefit-stack': 'Benefit Stack',
@@ -18,6 +22,9 @@
     results: [],
     busy: false,
     currentUser: null,
+    preparedProduct: null,
+    lastRun: null,
+    runStatus: 'draft',
     toastTimer: null
   };
 
@@ -42,6 +49,11 @@
     progressTitle: $('#progress-title'),
     progressMessage: $('#progress-message'),
     progressBar: $('#progress-bar'),
+    progressTrack: $('#progress-track'),
+    cutoutReview: $('#cutout-review'),
+    cutoutPreviewImage: $('#cutout-preview-image'),
+    approveCutout: $('#approve-cutout-btn'),
+    rejectCutout: $('#reject-cutout-btn'),
     projectStatus: $('#project-status'),
     resultsSection: $('#results-section'),
     resultsEmpty: $('#results-empty'),
@@ -108,6 +120,7 @@
   function addFiles(fileList) {
     elements.uploadError.textContent = '';
     const incoming = [...fileList];
+    const primaryIdBefore = state.files[0]?.id;
 
     for (const file of incoming) {
       if (state.files.length >= MAX_FILES) {
@@ -132,6 +145,7 @@
     }
 
     elements.fileInput.value = '';
+    if (primaryIdBefore !== state.files[0]?.id) state.preparedProduct = null;
     renderUploads();
     updateWorkflow(state.files.length ? 2 : 1);
   }
@@ -142,21 +156,38 @@
         ${index === 0 ? '<span class="preview-primary">PRIMARY</span>' : ''}
         <img src="${item.previewUrl}" alt="Preview of ${escapeHtml(item.file.name)}">
         <footer>
-          <div>
+          <div class="upload-file-copy">
             <strong title="${escapeHtml(item.file.name)}">${escapeHtml(item.file.name)}</strong>
             <small>${formatFileSize(item.file.size)}</small>
           </div>
-          <button class="remove-upload" type="button" data-remove-file="${item.id}" aria-label="Remove ${escapeHtml(item.file.name)}">×</button>
+          <div class="upload-actions">
+            ${index === 0 ? '' : `<button class="make-primary" type="button" data-primary-file="${item.id}" aria-label="Use ${escapeHtml(item.file.name)} as the primary product angle">Use</button>`}
+            <button class="remove-upload" type="button" data-remove-file="${item.id}" aria-label="Remove ${escapeHtml(item.file.name)}">×</button>
+          </div>
         </footer>
       </article>
     `).join('');
+
+    $$('[data-primary-file]', elements.uploadPreviews).forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = state.files.findIndex((item) => item.id === button.dataset.primaryFile);
+        if (index < 1) return;
+        const [selected] = state.files.splice(index, 1);
+        state.files.unshift(selected);
+        state.preparedProduct = null;
+        renderUploads();
+        showToast('Primary product angle updated.');
+      });
+    });
 
     $$('[data-remove-file]', elements.uploadPreviews).forEach((button) => {
       button.addEventListener('click', () => {
         const index = state.files.findIndex((item) => item.id === button.dataset.removeFile);
         if (index < 0) return;
+        const removedPrimary = index === 0;
         URL.revokeObjectURL(state.files[index].previewUrl);
         state.files.splice(index, 1);
+        if (removedPrimary) state.preparedProduct = null;
         renderUploads();
         updateWorkflow(state.files.length ? 2 : 1);
       });
@@ -194,6 +225,9 @@
   function updateTemplateCount() {
     const count = selectedTemplates().length;
     elements.templateCount.textContent = `${count} of 3 concepts selected`;
+    const infographicBriefRequired = selectedTemplates().some((template) => template !== 'marketplace-main');
+    $('#product-category').setAttribute('aria-required', String(infographicBriefRequired));
+    $('#product-benefits').setAttribute('aria-required', String(infographicBriefRequired));
   }
 
   function initializeTemplates() {
@@ -229,10 +263,9 @@
 
   function readBenefits() {
     return $('#product-benefits').value
-      .split(/\n|;/)
+      .split(/\r?\n/)
       .map((benefit) => benefit.trim())
-      .filter(Boolean)
-      .slice(0, 3);
+      .filter(Boolean);
   }
 
   function validateForm() {
@@ -242,6 +275,7 @@
     const category = $('#product-category');
     const benefits = readBenefits();
     const templates = selectedTemplates();
+    const needsInfographicBrief = templates.some((template) => template !== 'marketplace-main');
 
     if (!state.files.length) {
       elements.uploadError.textContent = 'Upload at least one clear product image.';
@@ -252,28 +286,40 @@
       markInvalid(productName);
       valid = false;
     }
-    if (!category.value.trim()) {
+    if (needsInfographicBrief && !category.value.trim()) {
       elements.briefError.textContent = 'Add the product name, category, and at least one verified benefit.';
       markInvalid(category);
       valid = false;
     }
-    if (!benefits.length) {
+    if (needsInfographicBrief && !benefits.length) {
       elements.briefError.textContent = 'Add at least one verified benefit.';
+      markInvalid($('#product-benefits'));
+      valid = false;
+    }
+    if (benefits.length > 3) {
+      elements.briefError.textContent = 'Use a maximum of three verified benefit lines.';
+      markInvalid($('#product-benefits'));
+      valid = false;
+    } else if (benefits.some((benefit) => benefit.length > 60)) {
+      elements.briefError.textContent = 'Keep each verified benefit to 60 characters or fewer so it remains readable.';
       markInvalid($('#product-benefits'));
       valid = false;
     }
     if (!templates.length) {
       elements.directionError.textContent = 'Select at least one creative concept.';
+      markInvalid($('input[name="templates"]'));
       valid = false;
     }
     if (!$('#rights-confirmation').checked) {
       elements.directionError.textContent = 'Confirm image rights and claim accuracy before generating.';
+      markInvalid($('#rights-confirmation'));
       valid = false;
     }
 
     if (!valid) {
-      const firstError = $('.field-error:not(:empty)');
-      firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const firstInvalid = $('[aria-invalid="true"]');
+      if (firstInvalid) firstInvalid.focus({ preventScroll: false });
+      else $('.field-error:not(:empty)')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return null;
     }
 
@@ -282,9 +328,9 @@
       category: category.value.trim(),
       audience: $('#target-audience').value.trim(),
       marketplace: $('#marketplace').value,
-      benefits,
+      benefits: benefits.slice(0, 3),
       headline: $('#creative-headline').value.trim() || productName.value.trim(),
-      subheadline: $('#creative-subheadline').value.trim() || benefits[0],
+      subheadline: $('#creative-subheadline').value.trim() || benefits[0] || '',
       visualStyle: $('#visual-style').value,
       canvasFormat: $('#canvas-format').value,
       brandColor: elements.brandColor.value,
@@ -308,6 +354,15 @@
     });
   }
 
+  function readFileDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(new Error(`Could not read ${file.name}.`));
+      reader.readAsDataURL(file);
+    });
+  }
+
   function estimateDataUrlBytes(dataUrl) {
     const base64 = dataUrl.split(',')[1] || '';
     return Math.ceil(base64.length * .75);
@@ -315,17 +370,20 @@
 
   async function compressImage(file) {
     const image = await loadFileImage(file);
-    if (image.naturalWidth < 256 || image.naturalHeight < 256) {
-      throw new Error(`${file.name} must be at least 256 × 256 pixels.`);
+    if (image.naturalWidth < 512 || image.naturalHeight < 512) {
+      throw new Error(`${file.name} must be at least 512 × 512 pixels.`);
     }
     if (image.naturalWidth * image.naturalHeight > 40_000_000) {
       throw new Error(`${file.name} has too many pixels. Resize it below 40 megapixels.`);
     }
+    if (file.size <= MAX_OPTIMIZED_IMAGE_BYTES) return readFileDataUrl(file);
 
     const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d', { alpha: false });
-    let edge = 1400;
-    let quality = .88;
+    const preserveAlpha = file.type === 'image/png' || file.type === 'image/webp';
+    const context = canvas.getContext('2d', { alpha: preserveAlpha });
+    const outputType = preserveAlpha ? 'image/webp' : 'image/jpeg';
+    let edge = 1800;
+    let quality = .92;
 
     for (let attempt = 0; attempt < 11; attempt += 1) {
       const scale = Math.min(1, edge / Math.max(image.naturalWidth, image.naturalHeight));
@@ -333,17 +391,20 @@
       const height = Math.max(1, Math.round(image.naturalHeight * scale));
       canvas.width = width;
       canvas.height = height;
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, width, height);
+      if (preserveAlpha) context.clearRect(0, 0, width, height);
+      else {
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, width, height);
+      }
       context.drawImage(image, 0, 0, width, height);
 
-      const result = canvas.toDataURL('image/jpeg', quality);
+      const result = canvas.toDataURL(outputType, quality);
       if (estimateDataUrlBytes(result) <= MAX_OPTIMIZED_IMAGE_BYTES) return result;
 
-      if (quality > .65) quality -= .08;
+      if (quality > .68) quality -= .08;
       else {
-        edge = Math.max(768, Math.round(edge * .82));
-        quality = .8;
+        edge = Math.max(960, Math.round(edge * .84));
+        quality = .84;
       }
     }
 
@@ -351,23 +412,86 @@
   }
 
   function setProgress(percent, title, message) {
-    elements.progressBar.style.width = `${Math.max(4, Math.min(100, percent))}%`;
+    const bounded = Math.max(0, Math.min(100, Math.round(percent)));
+    elements.progressBar.style.width = `${Math.max(4, bounded)}%`;
+    elements.progressTrack.setAttribute('aria-valuenow', String(bounded));
     elements.progressTitle.textContent = title;
     elements.progressMessage.textContent = message;
+  }
+
+  function setRunStatus(status) {
+    const labels = {
+      draft: 'Draft',
+      generating: 'Generating',
+      complete: 'Complete',
+      failed: 'Needs attention'
+    };
+    state.runStatus = status;
+    elements.projectStatus.textContent = labels[status] || labels.draft;
+    elements.projectStatus.classList.toggle('is-generating', status === 'generating');
+    elements.projectStatus.classList.toggle('is-error', status === 'failed');
   }
 
   function setBusy(busy) {
     state.busy = busy;
     elements.generateButton.disabled = busy;
-    elements.projectStatus.textContent = busy ? 'Generating' : state.results.length ? 'Complete' : 'Draft';
-    elements.projectStatus.classList.toggle('is-generating', busy);
-    elements.progress.hidden = !busy;
+    if (busy) setRunStatus('generating');
+    elements.progress.hidden = !busy && state.runStatus !== 'failed';
     elements.form.querySelectorAll('input, textarea, select, button').forEach((control) => {
       if (control !== elements.generateButton) control.disabled = busy;
     });
   }
 
-  async function requestGeneration(payload, template, images, token) {
+  async function requestProductPreparation(image, token) {
+    const response = await fetch('/api/prepare-product', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ image })
+    });
+
+    let body;
+    try { body = await response.json(); }
+    catch { body = {}; }
+
+    if (!response.ok) {
+      const error = new Error(body.error || 'Product cutout preparation failed.');
+      error.code = body.code;
+      error.status = response.status;
+      throw error;
+    }
+    if (!body.cutout) throw new Error('The product preparation service returned no cutout.');
+    return body;
+  }
+
+  function requestCutoutApproval(source) {
+    elements.cutoutPreviewImage.src = source;
+    elements.cutoutReview.hidden = false;
+
+    return new Promise((resolve, reject) => {
+      const finish = (approved) => {
+        elements.approveCutout.removeEventListener('click', approve);
+        elements.rejectCutout.removeEventListener('click', decline);
+        elements.cutoutReview.hidden = true;
+        if (approved) {
+          resolve();
+          return;
+        }
+        const error = new Error('Choose a different primary product photo, then generate again.');
+        error.code = 'CUTOUT_REJECTED_BY_USER';
+        reject(error);
+      };
+      const approve = () => finish(true);
+      const decline = () => finish(false);
+      elements.approveCutout.addEventListener('click', approve);
+      elements.rejectCutout.addEventListener('click', decline);
+      elements.approveCutout.focus();
+    });
+  }
+
+  async function requestGeneration(payload, template, token) {
     const response = await fetch('/api/generate-infographic', {
       method: 'POST',
       headers: {
@@ -376,8 +500,7 @@
       },
       body: JSON.stringify({
         ...payload,
-        template,
-        images
+        template
       })
     });
 
@@ -391,7 +514,7 @@
       error.status = response.status;
       throw error;
     }
-    if (!body.image) throw new Error('The generation service returned no image.');
+    if (!body.background) throw new Error('The generation service returned no background.');
     return body;
   }
 
@@ -432,72 +555,198 @@
     context.closePath();
   }
 
-  function fitText(context, text, maxWidth) {
-    const copy = String(text).trim();
-    if (context.measureText(copy).width <= maxWidth) return copy;
+  function layoutTextLines(context, text, maxWidth) {
+    let remaining = String(text).replace(/\s+/g, ' ').trim();
+    const lines = [];
+    while (remaining) {
+      if (context.measureText(remaining).width <= maxWidth) {
+        lines.push(remaining);
+        break;
+      }
 
-    const characters = [...copy];
-    while (characters.length && context.measureText(`${characters.join('')}…`).width > maxWidth) {
-      characters.pop();
+      let end = remaining.length;
+      while (end > 1 && context.measureText(remaining.slice(0, end)).width > maxWidth) end -= 1;
+      const wordBoundary = remaining.lastIndexOf(' ', end);
+      if (wordBoundary > 0) end = wordBoundary;
+      const line = remaining.slice(0, end).trim();
+      if (!line) throw new Error('Copy contains a word that is too long for the selected layout.');
+      lines.push(line);
+      remaining = remaining.slice(end).trim();
     }
-    return characters.length ? `${characters.join('').trim()}…` : '';
+    return lines;
   }
 
-  function wrapText(context, text, x, y, maxWidth, lineHeight, maxLines = 3) {
-    const words = String(text).trim().split(/\s+/);
-    const lines = [];
-    let line = '';
+  function drawFittedWrappedText(context, text, options) {
+    const {
+      x,
+      y,
+      maxWidth,
+      maxLines,
+      initialSize,
+      minimumSize,
+      weight,
+      lineHeightRatio = 1.14
+    } = options;
+    let lines = [];
+    let fontSize = initialSize;
 
-    for (let index = 0; index < words.length; index += 1) {
-      const word = words[index];
-      const test = line ? `${line} ${word}` : word;
-      if (context.measureText(test).width > maxWidth && line) {
-        if (lines.length === maxLines - 1) {
-          line = fitText(context, `${line} ${words.slice(index).join(' ')}`, maxWidth);
-          break;
-        }
-        lines.push(fitText(context, line, maxWidth));
-        line = word;
-      } else {
-        line = test;
+    for (; fontSize >= minimumSize; fontSize -= 1) {
+      context.font = `${weight} ${fontSize}px Inter, Arial, sans-serif`;
+      lines = layoutTextLines(context, text, maxWidth);
+      if (lines.length <= maxLines) break;
+    }
+    if (lines.length > maxLines) {
+      const error = new Error('Shorten the headline or supporting line for the selected canvas format.');
+      error.code = 'COPY_TOO_LONG';
+      throw error;
+    }
+
+    const lineHeight = fontSize * lineHeightRatio;
+    lines.forEach((line, index) => context.fillText(line, x, y + index * lineHeight));
+    return y + lines.length * lineHeight;
+  }
+
+  function drawFittedSingleLine(context, text, x, y, maxWidth, weight, initialSize, minimumSize) {
+    const copy = String(text).replace(/\s+/g, ' ').trim();
+    let fontSize = initialSize;
+    for (; fontSize >= minimumSize; fontSize -= .5) {
+      context.font = `${weight} ${fontSize}px Inter, Arial, sans-serif`;
+      if (context.measureText(copy).width <= maxWidth) {
+        context.fillText(copy, x, y);
+        return;
       }
     }
-    if (line && lines.length < maxLines) lines.push(fitText(context, line, maxWidth));
-
-    lines.forEach((value, index) => context.fillText(value, x, y + index * lineHeight));
-    return y + lines.length * lineHeight;
+    const error = new Error('Shorten the category or benefit copy so it remains readable.');
+    error.code = 'COPY_TOO_LONG';
+    throw error;
   }
 
   function drawBenefitPills(context, benefits, x, y, maxWidth, scale, dark = true) {
     let currentY = y;
     benefits.slice(0, 3).forEach((benefit) => {
-      const height = 44 * scale;
-      roundRect(context, x, currentY, maxWidth, height, 22 * scale);
+      const height = 58 * scale;
+      roundRect(context, x, currentY, maxWidth, height, 29 * scale);
       context.fillStyle = dark ? 'rgba(255,255,255,.13)' : 'rgba(255,255,255,.88)';
       context.fill();
       context.fillStyle = dark ? '#ffffff' : '#20213f';
-      context.font = `600 ${14 * scale}px Inter, Arial, sans-serif`;
-      const copy = fitText(context, `✓  ${benefit}`, maxWidth - 32 * scale);
-      context.fillText(copy, x + 16 * scale, currentY + 28 * scale);
-      currentY += height + 10 * scale;
+      drawFittedSingleLine(
+        context,
+        `✓  ${benefit}`,
+        x + 16 * scale,
+        currentY + 37 * scale,
+        maxWidth - 32 * scale,
+        700,
+        18 * scale,
+        10 * scale
+      );
+      currentY += height + 12 * scale;
     });
   }
 
-  async function composeInfographic(source, payload, template) {
-    if (template === 'marketplace-main') return source;
-    await document.fonts?.ready;
-    const image = await loadDataImage(source);
-    const canvas = document.createElement('canvas');
-    canvas.width = image.naturalWidth;
-    canvas.height = image.naturalHeight;
-    const context = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
+  function canvasSizeFor(payload, template) {
+    const format = template === 'marketplace-main' ? 'square' : payload.canvasFormat;
+    return { ...FINAL_SIZES[format], format };
+  }
 
-    const width = canvas.width;
-    const height = canvas.height;
-    const scale = Math.max(.72, Math.min(1.45, width / 1536));
-    const accent = payload.brandColor;
+  function drawCover(context, image, width, height) {
+    const imageRatio = image.naturalWidth / image.naturalHeight;
+    const targetRatio = width / height;
+    let sourceX = 0;
+    let sourceY = 0;
+    let sourceWidth = image.naturalWidth;
+    let sourceHeight = image.naturalHeight;
 
+    if (imageRatio > targetRatio) {
+      sourceWidth = sourceHeight * targetRatio;
+      sourceX = (image.naturalWidth - sourceWidth) / 2;
+    } else {
+      sourceHeight = sourceWidth / targetRatio;
+      sourceY = (image.naturalHeight - sourceHeight) / 2;
+    }
+
+    context.drawImage(
+      image,
+      sourceX,
+      sourceY,
+      sourceWidth,
+      sourceHeight,
+      0,
+      0,
+      width,
+      height
+    );
+  }
+
+  function productPlacement(template) {
+    const placements = {
+      'feature-spotlight': { centerX: .77, centerY: .54, maxWidth: .38, maxHeight: .74 },
+      'benefit-stack': { centerX: .5, centerY: .33, maxWidth: .46, maxHeight: .53 },
+      'lifestyle-story': { centerX: .77, centerY: .56, maxWidth: .38, maxHeight: .72 },
+      'marketplace-main': { centerX: .5, centerY: .5, maxWidth: .88, maxHeight: .88 }
+    };
+    return placements[template] || placements['feature-spotlight'];
+  }
+
+  function validateProductResolution(product, payload) {
+    for (const template of payload.templates) {
+      const placement = productPlacement(template);
+      const dimensions = canvasSizeFor(payload, template);
+      const requiredScale = Math.min(
+        (dimensions.width * placement.maxWidth) / product.naturalWidth,
+        (dimensions.height * placement.maxHeight) / product.naturalHeight
+      );
+      const maximumUpscale = template === 'marketplace-main' ? 1.25 : 1.5;
+      if (requiredScale > maximumUpscale) {
+        const error = new Error(`The isolated product is too small for a sharp ${TEMPLATE_LABELS[template]} image. Upload a closer photo at 1500px or larger.`);
+        error.code = 'PRODUCT_RESOLUTION_LOW';
+        throw error;
+      }
+    }
+  }
+
+  function drawProductCutout(context, product, template, width, height) {
+    const placement = productPlacement(template);
+    const desiredScale = Math.min(
+      (width * placement.maxWidth) / product.naturalWidth,
+      (height * placement.maxHeight) / product.naturalHeight
+    );
+    const isMarketplaceMain = template === 'marketplace-main';
+    const scale = isMarketplaceMain ? desiredScale : Math.min(desiredScale, 1.5);
+    const drawWidth = product.naturalWidth * scale;
+    const drawHeight = product.naturalHeight * scale;
+    const x = width * placement.centerX - drawWidth / 2;
+    const y = height * placement.centerY - drawHeight / 2;
+
+    if (isMarketplaceMain) {
+      context.drawImage(product, x, y, drawWidth, drawHeight);
+      return;
+    }
+
+    context.save();
+    context.filter = `blur(${Math.max(10, Math.round(width * .009))}px)`;
+    context.fillStyle = 'rgba(10,12,25,.2)';
+    context.beginPath();
+    context.ellipse(
+      x + drawWidth / 2,
+      y + drawHeight * .965,
+      drawWidth * .34,
+      Math.max(10, drawHeight * .025),
+      0,
+      0,
+      Math.PI * 2
+    );
+    context.fill();
+    context.restore();
+
+    context.save();
+    context.shadowColor = 'rgba(10,12,25,.2)';
+    context.shadowBlur = Math.max(14, width * .016);
+    context.shadowOffsetY = Math.max(8, height * .008);
+    context.drawImage(product, x, y, drawWidth, drawHeight);
+    context.restore();
+  }
+
+  function drawTemplateBase(context, template, width, height, scale) {
     if (template === 'feature-spotlight') {
       const gradient = context.createLinearGradient(0, 0, width * .72, 0);
       gradient.addColorStop(0, 'rgba(12,13,38,.94)');
@@ -505,36 +754,99 @@
       gradient.addColorStop(1, 'rgba(12,13,38,0)');
       context.fillStyle = gradient;
       context.fillRect(0, 0, width * .76, height);
+    }
 
+    if (template === 'benefit-stack') {
+      const gradient = context.createLinearGradient(0, height * .34, 0, height);
+      gradient.addColorStop(0, 'rgba(10,11,30,0)');
+      gradient.addColorStop(.55, 'rgba(10,11,30,.62)');
+      gradient.addColorStop(1, 'rgba(10,11,30,.95)');
+      context.fillStyle = gradient;
+      context.fillRect(0, height * .27, width, height * .73);
+    }
+
+    if (template === 'lifestyle-story') {
+      const panelX = 58 * scale;
+      const panelY = 60 * scale;
+      const panelWidth = width * .43;
+      const panelHeight = Math.min(height * .72, 660 * scale);
+      roundRect(context, panelX, panelY, panelWidth, panelHeight, 22 * scale);
+      context.fillStyle = 'rgba(255,255,255,.92)';
+      context.fill();
+      context.strokeStyle = 'rgba(255,255,255,.65)';
+      context.lineWidth = 2 * scale;
+      context.stroke();
+    }
+  }
+
+  function drawTemplateCopy(context, payload, template, width, height, scale) {
+    const accent = payload.brandColor;
+
+    if (template === 'feature-spotlight') {
       context.fillStyle = accent;
-      roundRect(context, 72 * scale, 78 * scale, 148 * scale, 35 * scale, 18 * scale);
+      roundRect(context, 72 * scale, 78 * scale, 164 * scale, 35 * scale, 18 * scale);
       context.fill();
       context.fillStyle = '#fff';
       context.font = `800 ${12 * scale}px Inter, Arial, sans-serif`;
       context.fillText('FEATURE SPOTLIGHT', 88 * scale, 101 * scale);
 
       context.fillStyle = '#fff';
-      context.font = `800 ${56 * scale}px Inter, Arial, sans-serif`;
-      const copyEnd = wrapText(context, payload.headline, 72 * scale, 190 * scale, width * .42, 63 * scale, 3);
-      context.fillStyle = 'rgba(255,255,255,.8)';
-      context.font = `500 ${21 * scale}px Inter, Arial, sans-serif`;
-      wrapText(context, payload.subheadline, 74 * scale, copyEnd + 22 * scale, width * .39, 29 * scale, 2);
-      drawBenefitPills(context, payload.benefits.slice(0, 2), 72 * scale, height - 175 * scale, width * .39, scale, true);
+      const copyEnd = drawFittedWrappedText(context, payload.headline, {
+        x: 72 * scale,
+        y: 190 * scale,
+        maxWidth: width * .42,
+        maxLines: 3,
+        initialSize: 56 * scale,
+        minimumSize: 34 * scale,
+        weight: 800
+      });
+      context.fillStyle = 'rgba(255,255,255,.82)';
+      drawFittedWrappedText(context, payload.subheadline, {
+        x: 74 * scale,
+        y: copyEnd + 22 * scale,
+        maxWidth: width * .39,
+        maxLines: 3,
+        initialSize: 21 * scale,
+        minimumSize: 14 * scale,
+        weight: 500,
+        lineHeightRatio: 1.35
+      });
+      const pillBlockHeight = (payload.benefits.length * 58 + Math.max(0, payload.benefits.length - 1) * 12) * scale;
+      drawBenefitPills(
+        context,
+        payload.benefits,
+        72 * scale,
+        height - pillBlockHeight - 48 * scale,
+        width * .39,
+        scale,
+        true
+      );
     }
 
     if (template === 'benefit-stack') {
-      const gradient = context.createLinearGradient(0, height * .38, 0, height);
-      gradient.addColorStop(0, 'rgba(10,11,30,0)');
-      gradient.addColorStop(.55, 'rgba(10,11,30,.62)');
-      gradient.addColorStop(1, 'rgba(10,11,30,.94)');
-      context.fillStyle = gradient;
-      context.fillRect(0, height * .3, width, height * .7);
-
       context.fillStyle = rgba(accent, .95);
       context.fillRect(66 * scale, height - 290 * scale, 8 * scale, 188 * scale);
       context.fillStyle = '#fff';
-      context.font = `800 ${46 * scale}px Inter, Arial, sans-serif`;
-      wrapText(context, payload.headline, 96 * scale, height - 250 * scale, width * .45, 53 * scale, 2);
+      const headlineEnd = drawFittedWrappedText(context, payload.headline, {
+        x: 96 * scale,
+        y: height - 250 * scale,
+        maxWidth: width * .45,
+        maxLines: 2,
+        initialSize: 46 * scale,
+        minimumSize: 30 * scale,
+        weight: 800
+      });
+      context.fillStyle = 'rgba(255,255,255,.82)';
+      drawFittedWrappedText(context, payload.subheadline, {
+        x: 96 * scale,
+        y: headlineEnd + 12 * scale,
+        maxWidth: width * .43,
+        maxLines: 2,
+        initialSize: 17 * scale,
+        minimumSize: 12 * scale,
+        weight: 500,
+        lineHeightRatio: 1.3
+      });
       drawBenefitPills(context, payload.benefits, width * .57, height - 245 * scale, width * .36, scale, true);
     }
 
@@ -542,32 +854,105 @@
       const panelX = 58 * scale;
       const panelY = 60 * scale;
       const panelWidth = width * .43;
-      const panelHeight = Math.min(height * .55, 390 * scale);
-      roundRect(context, panelX, panelY, panelWidth, panelHeight, 22 * scale);
-      context.fillStyle = 'rgba(255,255,255,.9)';
-      context.fill();
-      context.strokeStyle = 'rgba(255,255,255,.55)';
-      context.lineWidth = 2 * scale;
-      context.stroke();
-
       context.fillStyle = accent;
-      context.font = `800 ${13 * scale}px Inter, Arial, sans-serif`;
-      context.fillText(payload.category.toUpperCase(), panelX + 35 * scale, panelY + 50 * scale);
+      drawFittedSingleLine(
+        context,
+        payload.category.toUpperCase(),
+        panelX + 35 * scale,
+        panelY + 50 * scale,
+        panelWidth - 70 * scale,
+        800,
+        13 * scale,
+        9 * scale
+      );
       context.fillStyle = '#171838';
-      context.font = `800 ${43 * scale}px Inter, Arial, sans-serif`;
-      const end = wrapText(context, payload.headline, panelX + 35 * scale, panelY + 112 * scale, panelWidth - 70 * scale, 49 * scale, 3);
+      const headlineEnd = drawFittedWrappedText(context, payload.headline, {
+        x: panelX + 35 * scale,
+        y: panelY + 112 * scale,
+        maxWidth: panelWidth - 70 * scale,
+        maxLines: 3,
+        initialSize: 43 * scale,
+        minimumSize: 28 * scale,
+        weight: 800
+      });
       context.fillStyle = '#686b7e';
-      context.font = `500 ${18 * scale}px Inter, Arial, sans-serif`;
-      wrapText(context, payload.subheadline, panelX + 35 * scale, end + 18 * scale, panelWidth - 70 * scale, 26 * scale, 2);
+      const supportingEnd = drawFittedWrappedText(context, payload.subheadline, {
+        x: panelX + 35 * scale,
+        y: headlineEnd + 18 * scale,
+        maxWidth: panelWidth - 70 * scale,
+        maxLines: 3,
+        initialSize: 18 * scale,
+        minimumSize: 12 * scale,
+        weight: 500,
+        lineHeightRatio: 1.35
+      });
+      drawBenefitPills(
+        context,
+        payload.benefits,
+        panelX + 35 * scale,
+        supportingEnd + 18 * scale,
+        panelWidth - 70 * scale,
+        scale,
+        false
+      );
+    }
+  }
+
+  function validateCopyLayout(payload) {
+    payload.templates
+      .filter((template) => template !== 'marketplace-main')
+      .forEach((template) => {
+        const dimensions = canvasSizeFor(payload, template);
+        const canvas = document.createElement('canvas');
+        canvas.width = dimensions.width;
+        canvas.height = dimensions.height;
+        const context = canvas.getContext('2d');
+        const scale = Math.max(.8, Math.min(1.35, canvas.width / 1536));
+        drawTemplateCopy(context, payload, template, canvas.width, canvas.height, scale);
+      });
+  }
+
+  async function composeInfographic(backgroundSource, product, payload, template) {
+    await document.fonts?.ready;
+    const dimensions = canvasSizeFor(payload, template);
+    const canvas = document.createElement('canvas');
+    canvas.width = dimensions.width;
+    canvas.height = dimensions.height;
+    const context = canvas.getContext('2d', { alpha: false });
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = 'high';
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (backgroundSource) {
+      const background = await loadDataImage(backgroundSource);
+      drawCover(context, background, canvas.width, canvas.height);
     }
 
-    return canvas.toDataURL('image/jpeg', .92);
+    const scale = Math.max(.8, Math.min(1.35, canvas.width / 1536));
+    drawTemplateBase(context, template, canvas.width, canvas.height, scale);
+    drawProductCutout(context, product, template, canvas.width, canvas.height);
+    if (template !== 'marketplace-main') {
+      drawTemplateCopy(context, payload, template, canvas.width, canvas.height, scale);
+    }
+
+    return {
+      image: canvas.toDataURL('image/jpeg', .95),
+      width: canvas.width,
+      height: canvas.height,
+      format: dimensions.format
+    };
   }
 
   function resultRatio(format) {
     if (format === 'square') return '1 / 1';
     if (format === 'portrait') return '2 / 3';
     return '3 / 2';
+  }
+
+  function runSignature(payload, primaryFileId) {
+    const { templates, ...creativeBrief } = payload;
+    return JSON.stringify({ primaryFileId, creativeBrief });
   }
 
   function resultFilename(result) {
@@ -628,7 +1013,7 @@
       const title = document.createElement('strong');
       const meta = document.createElement('small');
       title.textContent = TEMPLATE_LABELS[result.template] || result.template;
-      meta.textContent = `${result.canvasFormat} · JPG`;
+      meta.textContent = `${result.width}×${result.height} · JPG`;
       copy.append(title, meta);
 
       const actions = document.createElement('div');
@@ -655,69 +1040,153 @@
     const payload = validateForm();
     if (!payload) return;
 
+    try {
+      await document.fonts?.ready;
+      validateCopyLayout(payload);
+    } catch (error) {
+      elements.briefError.textContent = error.message || 'Shorten the infographic copy for the selected layout.';
+      elements.briefError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const primaryFile = state.files[0];
+    const signature = runSignature(payload, primaryFile.id);
+    const canResume = (
+      state.runStatus === 'failed' &&
+      state.lastRun?.signature === signature
+    );
+    const previousResults = canResume ? state.lastRun.previousResults : state.results.slice(0, 6);
+    const generated = canResume
+      ? state.lastRun.results.filter((result) => payload.templates.includes(result.template))
+      : [];
+    state.lastRun = { signature, results: generated, previousResults };
+    state.results = [...generated, ...previousResults].slice(0, 6);
+    renderResults();
+    elements.cutoutReview.hidden = true;
     setBusy(true);
     updateWorkflow(4);
     setProgress(7, 'Preparing your product references…', 'Compressing uploads securely in your browser.');
     elements.progress.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-    const generated = [];
-    const previousResults = state.results;
-
     try {
-      const images = [];
-      for (let index = 0; index < state.files.length; index += 1) {
-        setProgress(8 + index * 4, 'Preparing your product references…', `Optimizing image ${index + 1} of ${state.files.length}.`);
-        images.push(await compressImage(state.files[index].file));
-      }
-
-      const totalBytes = images.reduce((sum, image) => sum + estimateDataUrlBytes(image), 0);
-      if (totalBytes > MAX_COMBINED_IMAGE_BYTES) {
-        throw new Error('The optimized uploads are still too large. Use fewer or smaller source photos.');
-      }
-
+      setProgress(10, 'Preparing the locked product layer…', 'Optimizing the selected primary product photo.');
+      const primaryImage = await compressImage(primaryFile.file);
       const token = await state.currentUser.getIdToken(true);
+
+      let prepared = state.preparedProduct;
+      if (!prepared || prepared.fileId !== primaryFile.id) {
+        setProgress(
+          17,
+          'Removing the background…',
+          'Creating a transparent cutout while preserving the original label and packaging.'
+        );
+        const response = await requestProductPreparation(primaryImage, token);
+        prepared = {
+          fileId: primaryFile.id,
+          cutout: response.cutout,
+          provider: response.provider,
+          requestId: response.requestId,
+          width: response.width,
+          height: response.height,
+          approved: false
+        };
+        state.preparedProduct = prepared;
+      }
+
+      const productImage = await loadDataImage(prepared.cutout);
+      validateProductResolution(productImage, payload);
+      if (!prepared.approved) {
+        setProgress(23, 'Review the product cutout', 'Paid background generation will begin only after you approve this product layer.');
+        await requestCutoutApproval(prepared.cutout);
+        prepared.approved = true;
+      }
+
+      setProgress(26, 'Product layer locked', 'The non-generative product cutout is ready for 2K composition.');
       for (let index = 0; index < payload.templates.length; index += 1) {
         const template = payload.templates[index];
+        if (generated.some((result) => result.template === template)) continue;
         const conceptPayload = template === 'marketplace-main'
           ? { ...payload, canvasFormat: 'square' }
           : payload;
-        const start = 22 + (index / payload.templates.length) * 68;
+        const start = 30 + (index / payload.templates.length) * 62;
+        let background = null;
+        let requestId = `${prepared.requestId || Date.now()}-${template}`;
+
+        if (template === 'marketplace-main') {
+          setProgress(start, 'Composing Marketplace Main…', 'Placing the original product on a compliant pure-white canvas.');
+        } else {
+          setProgress(
+            start,
+            `Creating ${TEMPLATE_LABELS[template]} background…`,
+            'Generating a product-free 2K scene. High-quality output can take a few minutes.'
+          );
+          const response = await requestGeneration(conceptPayload, template, token);
+          background = response.background;
+          requestId = response.requestId || requestId;
+        }
+
         setProgress(
-          start,
-          `Creating ${TEMPLATE_LABELS[template]}…`,
-          'Preserving the product while building the scene. This can take up to 90 seconds.'
+          start + 15,
+          'Compositing the original product…',
+          template === 'marketplace-main'
+            ? 'Placing the locked product layer on a shadow-free pure-white canvas.'
+            : 'Adding the locked product layer, natural shadow, and approved copy.'
         );
-        const response = await requestGeneration(conceptPayload, template, images, token);
-        setProgress(start + 16, 'Applying exact approved copy…', 'Rendering your headline and benefits without AI spelling errors.');
-        const finalImage = await composeInfographic(response.image, conceptPayload, template);
+        const composition = await composeInfographic(
+          background,
+          productImage,
+          conceptPayload,
+          template
+        );
         const result = {
-          id: response.requestId || `${Date.now()}-${index}`,
-          image: finalImage,
+          id: requestId,
+          image: composition.image,
           template,
           productName: payload.productName,
-          canvasFormat: conceptPayload.canvasFormat
+          canvasFormat: composition.format,
+          width: composition.width,
+          height: composition.height
         };
         generated.push(result);
-        state.results = [...generated, ...previousResults];
+        state.lastRun.results = [...generated];
+        state.results = [...generated, ...previousResults].slice(0, 6);
         renderResults();
         incrementLocalGenerationCount(1);
       }
 
       setProgress(100, 'Creative set complete', 'Your finished images are ready to review and download.');
+      state.results = [...generated];
+      state.lastRun.results = [...generated];
+      renderResults();
+      setRunStatus('complete');
       showToast(`${generated.length} creative${generated.length === 1 ? '' : 's'} generated successfully.`);
       elements.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (error) {
       console.error('Generation failed:', error.code || error.status || error.message);
+      if (error.code === 'CUTOUT_REJECTED_BY_USER') state.preparedProduct = null;
       const friendly = error.code === 'SERVICE_NOT_CONFIGURED'
         ? 'Generation is not configured yet. Add the required environment variables in Vercel and redeploy.'
+        : error.code === 'CUTOUT_SERVICE_NOT_CONFIGURED'
+          ? 'Product background removal is not configured yet. Add PHOTOROOM_API_KEY in Vercel and redeploy.'
         : error.code === 'DAILY_LIMIT_REACHED'
           ? 'Your daily generation limit has been reached.'
+          : error.code === 'DAILY_PREPARATION_LIMIT_REACHED'
+            ? 'Your daily product preparation limit has been reached.'
+          : error.code === 'GLOBAL_DAILY_LIMIT_REACHED'
+            ? 'The image service has reached today’s protected spending limit. Please try again tomorrow.'
+          : error.code === 'EMAIL_VERIFICATION_REQUIRED'
+            ? 'Verify your email address, then sign in again before generating.'
+          : error.code === 'GENERATION_ACCESS_REQUIRED'
+            ? 'Your account needs an active image-generation entitlement.'
+          : error.code === 'PRODUCT_RESOLUTION_LOW'
+            ? error.message
           : error.message || 'Generation failed. Please try again.';
       const message = generated.length
         ? `${generated.length} creative${generated.length === 1 ? '' : 's'} completed. The next concept stopped: ${friendly}`
         : friendly;
       showToast(message, 'error');
       setProgress(4, 'Generation stopped', message);
+      setRunStatus('failed');
       if (generated.length) elements.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } finally {
       setTimeout(() => {
