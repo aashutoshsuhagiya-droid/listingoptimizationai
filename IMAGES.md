@@ -9,7 +9,7 @@ All raster prompts and metadata are the source of truth in [`scripts/prompts.js`
 | Hero | `hero/us-flag` | 1 | 1920×1080 | Offline pipeline |
 | Stylized brand wordmarks | `brands/heinz` through `brands/huggies` | 9 | 400×200, transparent | Offline pipeline |
 | How it works | `how-it-works/step1-asin` through `step4-upload` | 4 | 1200×800 | Offline pipeline |
-| Review gallery | `gallery/review-1` through `review-8` | 8 | 800×600 | Offline pipeline |
+| Review gallery | `gallery/review-1` through `review-8` | 8 | 800×800 | Offline pipeline |
 | A+ content | `aplus/hero` | 1 | 1200×800 | Offline pipeline |
 | Product variants | `variants/color-01` through `color-11` | 11 | 600×800 | Offline pipeline |
 | User gallery | `user-gallery/user-01` through `user-20` | 20 | 800×800 | Offline pipeline |

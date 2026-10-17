@@ -10,12 +10,13 @@ Authenticated customers can use `dashboard.html` to:
 - select the strongest primary angle and turn it into a transparent, product-locked cutout;
 - inspect and approve that cutout before paid background generation begins;
 - enter verified product benefits and exact infographic copy;
-- choose Feature, Benefit, Lifestyle, or Marketplace Main concepts;
+- choose from eleven controlled concepts, including Feature, Lifestyle, A+ Hero, Comparison, Usage Guide, Problem / Solution, Detail Callouts, Performance Action, Feature Collage, and Marketplace Main;
 - generate product-free 2K scenes through a server-only image API;
+- create review-required color, size, or shape variants from an approved cutout;
 - composite the non-generatively-redrawn product cutout, natural shadows, and exact typography in the browser; and
 - review and download 2000px JPG creatives.
 
-OpenAI and PhotoRoom keys are never sent to the browser. Firebase Admin requires a verified user and, unless explicitly disabled for setup, a paid custom-claim entitlement; Firestore enforces required per-user and global cutout/generation limits. Uploaded images are resized before transport, and image bytes are returned without being permanently stored by this codebase. OpenAI receives the creative brief but not the customer product photo.
+OpenAI and PhotoRoom keys are never sent to the browser. Firebase Admin requires a verified user and, unless explicitly disabled for setup, a paid custom-claim entitlement; Firestore enforces separate required per-user and global limits for cutout preparation, backgrounds, and variants. Background generation receives only the creative brief. The opt-in variant route requires a short-lived signed proof binding the prepared cutout to the authenticated user before it sends the approved cutout and sanitized color, size, or shape instruction to OpenAI. The chroma-backed edit then goes to PhotoRoom for isolation; because this is a generative edit, exact logo and label fidelity must be verified by the customer. Image bytes are returned without being permanently stored by this codebase.
 
 See [`GENERATION_SETUP.md`](GENERATION_SETUP.md) before deploying the generator.
 

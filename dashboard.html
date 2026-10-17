@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="dashboard.css">
 </head>
 <body class="dashboard-shell is-auth-loading">
+  <a class="skip-link" href="#studio-title">Skip to workspace</a>
   <div id="auth-loading" class="auth-loading" role="status">
     <span class="spinner" aria-hidden="true"></span>
     <p>Securing your workspace…</p>
@@ -59,11 +60,11 @@
             <li class="is-active" data-nav-step="1"><span>1</span><div><strong>Product photos</strong><small>Select one primary angle</small></div></li>
             <li data-nav-step="2"><span>2</span><div><strong>Product brief</strong><small>Only verified facts and benefits</small></div></li>
             <li data-nav-step="3"><span>3</span><div><strong>Creative direction</strong><small>Choose up to three concepts</small></div></li>
-            <li data-nav-step="4"><span>4</span><div><strong>Generate & export</strong><small>Review 2000px JPG files</small></div></li>
+            <li data-nav-step="4"><span>4</span><div><strong>Generate & export</strong><small id="export-size-note">Review 2000px infographic JPGs</small></div></li>
           </ol>
           <div class="sidebar-note">
             <strong>Why the product stays accurate</strong>
-            <p>The original product is cut out once and composited unchanged. AI creates only the empty scene; approved copy is rendered separately.</p>
+            <p>The original product is cut out and reviewed once. Infographics composite it unchanged; variants edit a separate copy that must pass a second fidelity review.</p>
           </div>
         </aside>
 
@@ -151,6 +152,22 @@
                 <div><h3 id="direction-title">Choose your creative direction</h3><p>Select one to three concepts. Each concept is generated separately for better quality and control.</p></div>
               </div>
 
+              <fieldset class="output-mode-switch" aria-describedby="output-mode-help">
+                <legend>What would you like to create?</legend>
+                <div class="output-mode-grid">
+                  <label class="output-mode-card">
+                    <input id="output-mode-creative" type="radio" name="outputMode" value="creative" aria-controls="creative-options" checked>
+                    <span><strong>Infographics &amp; A+ content</strong><small>Keep the approved product pixels unchanged and build scenes around them.</small></span>
+                  </label>
+                  <label class="output-mode-card">
+                    <input id="output-mode-variant" type="radio" name="outputMode" value="variant" aria-controls="variant-options">
+                    <span><strong>Product variants</strong><small>Create a controlled color, size, or shape concept from the approved cutout.</small></span>
+                  </label>
+                </div>
+                <p id="output-mode-help">Variant generation edits product pixels and always requires a separate fidelity review.</p>
+              </fieldset>
+
+              <div id="creative-options" class="output-options-panel">
               <div class="template-grid" role="group" aria-label="Creative concepts">
                 <label class="template-card">
                   <input type="checkbox" name="templates" value="feature-spotlight" checked>
@@ -176,8 +193,51 @@
                   <strong>Marketplace Main</strong>
                   <small>Original product cutout on pure white; square and marketplace-ready.</small>
                 </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="a-plus-claim-hero">
+                  <span class="template-visual claim-hero-visual"><i></i><b>05</b></span>
+                  <strong>A+ Claim Hero</strong>
+                  <small>Wide, claim-led brand banner featuring verified benefits.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="comparison-chart">
+                  <span class="template-visual comparison-visual"><i></i><b>06</b></span>
+                  <strong>Comparison Chart</strong>
+                  <small>Clear check-and-cross comparison built from verified product facts.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="usage-timeline">
+                  <span class="template-visual usage-visual"><i></i><b>07</b></span>
+                  <strong>Usage Timeline</strong>
+                  <small>Three verified usage steps with clear application callouts.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="problem-solution">
+                  <span class="template-visual problem-solution-visual" aria-hidden="true"><i></i><b>08</b></span>
+                  <strong>Problem / Solution</strong>
+                  <small>Contrast a verified pain point with the product-led resolution.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="detail-callouts">
+                  <span class="template-visual detail-callouts-visual" aria-hidden="true"><i></i><b>09</b></span>
+                  <strong>Detail Callouts</strong>
+                  <small>Highlight product details with precise, verified callouts.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="performance-action">
+                  <span class="template-visual performance-action-visual" aria-hidden="true"><i></i><b>10</b></span>
+                  <strong>Performance Action</strong>
+                  <small>Bold motion-led layout for substantiated performance claims.</small>
+                </label>
+                <label class="template-card">
+                  <input type="checkbox" name="templates" value="feature-collage" aria-describedby="feature-collage-help">
+                  <span class="template-visual feature-collage-visual" aria-hidden="true"><i></i><b>11</b></span>
+                  <strong>Feature Collage</strong>
+                  <small>Three-part collage built from verified product benefits.</small>
+                </label>
               </div>
               <p id="template-count" class="selection-count">1 of 3 concepts selected</p>
+              <p id="feature-collage-help" class="template-requirement" hidden><strong>Feature Collage:</strong> requires exactly 3 verified benefits.</p>
 
               <div class="field-grid direction-fields">
                 <label class="field">
@@ -190,7 +250,7 @@
                   </select>
                 </label>
                 <label class="field">
-                  <span>Output format</span>
+                  <span>Output format <small>A+ Hero, Comparison, Problem / Solution, and Collage use landscape</small></span>
                   <select id="canvas-format" name="canvasFormat">
                     <option value="landscape">Landscape · 3:2</option>
                     <option value="square">Square · 1:1</option>
@@ -203,6 +263,125 @@
                 </label>
               </div>
 
+                <div id="comparison-fields" class="conditional-creative-fields" hidden aria-labelledby="comparison-fields-title">
+                  <div class="conditional-fields-heading">
+                    <strong id="comparison-fields-title">Verified comparison data</strong>
+                    <span>Comparison Chart</span>
+                  </div>
+                  <label class="field-wide">
+                    <span>Comparison target <small>Name the exact benchmark or owned SKU</small></span>
+                    <input id="comparison-target" name="comparisonTarget" type="text" maxlength="30" placeholder="e.g. Standard foam pad">
+                  </label>
+                  <label class="field-wide">
+                    <span>Comparison points <small>2–3 rows · feature 28 / values 40 characters</small></span>
+                    <textarea id="comparison-points" name="comparisonPoints" rows="4" maxlength="182" aria-describedby="comparison-points-help" placeholder="Support | All-day | Standard&#10;Materials | Reinforced | Basic"></textarea>
+                  </label>
+                  <p id="comparison-points-help" class="conditional-fields-help">Use 2–3 lines formatted <code>Feature | This product | Alternative</code>, for example <code>Support | All-day | Standard</code>.</p>
+                  <label class="rights-confirmation conditional-confirmation">
+                    <input id="comparison-ack" name="comparisonAcknowledgement" type="checkbox" data-required-when-active="true">
+                    <span>I confirm that every comparison value is accurate, current, and supported by evidence I can substantiate.</span>
+                  </label>
+                </div>
+
+                <div id="usage-fields" class="conditional-creative-fields" hidden aria-labelledby="usage-fields-title">
+                  <div class="conditional-fields-heading">
+                    <strong id="usage-fields-title">Verified usage sequence</strong>
+                    <span>Usage Timeline</span>
+                  </div>
+                  <label class="field-wide">
+                    <span>Usage steps <small>3 rows · title 24 / instruction 55 characters</small></span>
+                    <textarea id="usage-steps" name="usageSteps" rows="4" maxlength="182" aria-describedby="usage-steps-help" placeholder="Prepare | Clean and dry the surface&#10;Apply | Use the recommended amount&#10;Finish | Follow the product directions"></textarea>
+                  </label>
+                  <p id="usage-steps-help" class="conditional-fields-help">Use exactly 3 lines formatted <code>Step title | short verified instruction</code>, for example <code>Prepare | Clean and dry the surface</code>.</p>
+                  <label class="rights-confirmation conditional-confirmation">
+                    <input id="usage-ack" name="usageAcknowledgement" type="checkbox" data-required-when-active="true">
+                    <span>I confirm these steps match the product label, packaging, or official directions for use.</span>
+                  </label>
+                </div>
+
+                <div id="problem-solution-fields" class="conditional-creative-fields" hidden aria-labelledby="problem-solution-fields-title">
+                  <div class="conditional-fields-heading">
+                    <strong id="problem-solution-fields-title">Verified problem and solution</strong>
+                    <span>Problem / Solution</span>
+                  </div>
+                  <div class="conditional-copy-grid">
+                    <label class="field-wide">
+                      <span>Problem state <small>55 characters maximum</small></span>
+                      <input id="problem-copy" name="problemCopy" type="text" maxlength="55" placeholder="e.g. Uncomfortable support fades too soon">
+                    </label>
+                    <label class="field-wide">
+                      <span>Solution state <small>55 characters maximum</small></span>
+                      <input id="solution-copy" name="solutionCopy" type="text" maxlength="55" placeholder="e.g. Reinforced layers deliver lasting support">
+                    </label>
+                  </div>
+                  <p class="conditional-fields-help">Describe only states you can verify from current product evidence.</p>
+                  <label class="rights-confirmation conditional-confirmation">
+                    <input id="problem-solution-ack" name="problemSolutionAcknowledgement" type="checkbox" data-required-when-active="true">
+                    <span>I confirm that both the problem and solution states are truthful, current, and substantiated.</span>
+                  </label>
+                </div>
+              </div>
+
+              <div id="variant-options" class="output-options-panel variant-options" hidden aria-labelledby="variant-options-title">
+                <div class="variant-options-heading">
+                  <div>
+                    <strong id="variant-options-title">Describe the product edit</strong>
+                    <p>Choose one attribute, then add up to three clearly named variant jobs.</p>
+                  </div>
+                  <span>Generated edit</span>
+                </div>
+
+                <fieldset class="variant-type-selector">
+                  <legend>Variant type</legend>
+                  <div class="variant-type-grid">
+                    <label class="variant-type-card">
+                      <input id="variant-type-color" type="radio" name="variantType" value="color" checked>
+                      <span><strong>Color</strong><small>Change one intended product surface.</small></span>
+                    </label>
+                    <label class="variant-type-card">
+                      <input id="variant-type-size" type="radio" name="variantType" value="size">
+                      <span><strong>Size</strong><small>Adjust specified dimensions or proportions.</small></span>
+                    </label>
+                    <label class="variant-type-card">
+                      <input id="variant-type-shape" type="radio" name="variantType" value="shape">
+                      <span><strong>Shape</strong><small>Explore controlled outer-geometry changes.</small></span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <div id="variant-jobs" class="variant-jobs" aria-live="polite">
+                  <div class="variant-job" data-variant-job data-job-index="0">
+                    <div class="variant-job-heading"><strong>Variant 1</strong><span>1 of 3</span></div>
+                    <div class="variant-job-grid">
+                      <label class="variant-job-field">
+                        <span>Variant label <small>For results and filenames</small></span>
+                        <input class="variant-label" name="variantLabel[]" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Terracotta red">
+                      </label>
+                      <label class="variant-job-field variant-instruction-field">
+                        <span>Edit instruction <small>300 characters maximum</small></span>
+                        <textarea class="variant-instruction" name="variantInstruction[]" rows="3" maxlength="300" placeholder="e.g. Change only the bottle body to terracotta red; keep the cap, label, logo, text, finish, and proportions unchanged."></textarea>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="variant-job-toolbar">
+                  <button id="add-variant-job" class="add-variant-job" type="button" aria-controls="variant-jobs">+ Add another variant</button>
+                  <span id="variant-count" class="selection-count" aria-live="polite">1 of 3 variants</span>
+                </div>
+
+                <aside class="variant-upload-guidance" aria-label="Variant fidelity recommendation">
+                  <span aria-hidden="true">!</span>
+                  <p><strong>Real SKU photography is always preferred.</strong> Use generated variants for exploration; upload and photograph each manufactured color, size, or shape before publishing a sellable listing.</p>
+                </aside>
+
+                <label class="rights-confirmation variant-fidelity-confirmation">
+                  <input id="variant-fidelity-ack" name="variantFidelityAcknowledgement" type="checkbox" data-required-when-active="true">
+                  <span>I understand that AI can alter small label or packaging details, and I will compare every generated variant with the real SKU at 200% before publishing.</span>
+                </label>
+                <div id="variant-error" class="field-error" role="alert"></div>
+              </div>
+
               <label class="rights-confirmation">
                 <input id="rights-confirmation" type="checkbox" required>
                 <span>I own or have permission to use these images, and all product claims entered above are accurate.</span>
@@ -213,7 +392,7 @@
             <div class="generate-bar">
               <div>
                 <strong>Ready to create?</strong>
-                <small>Opaque primary photos are sent to PhotoRoom for background removal; transparent uploads bypass it. AI receives the brief only and creates a product-free scene. Images are not stored by this app.</small>
+                <small id="generation-privacy-note">Opaque primary photos are sent to PhotoRoom; transparent uploads bypass the first removal step. Infographics send only the brief to OpenAI. Variants send the approved cutout to OpenAI, then send the edited image to PhotoRoom for clean isolation. Images are not stored by this app.</small>
               </div>
               <button id="generate-btn" class="btn btn-primary generate-submit" type="submit">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3Zm6 11 .9 2.1L21 17l-2.1.9L18 20l-.9-2.1L15 17l2.1-.9L18 14Z"/></svg>
@@ -240,19 +419,33 @@
                 </div>
               </div>
             </div>
+            <div id="variant-review" class="cutout-review variant-review" hidden>
+              <div class="cutout-preview variant-preview"><img id="variant-preview-image" alt="Generated product variant awaiting fidelity review"></div>
+              <div>
+                <span class="review-eyebrow">GENERATED VARIANT · 200% REVIEW</span>
+                <strong>Compare every product detail before locking this variant</strong>
+                <p>Zoom to 200% and compare the logo, label text, spelling, color boundaries, shape, cap, packaging, and proportions with the real SKU. Approval locks this derived layer only; your original approved cutout stays unchanged.</p>
+                <div class="cutout-review-actions">
+                  <button id="open-variant-preview-btn" type="button">Open variant full-size</button>
+                  <button id="open-original-preview-btn" type="button">Open original</button>
+                  <button id="reject-variant-btn" type="button">Reject variant</button>
+                  <button id="approve-variant-btn" class="primary" type="button">Approve &amp; lock variant</button>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </div>
 
       <section id="results-section" class="results-section" aria-labelledby="results-title">
         <div class="results-heading">
-          <div><p class="panel-eyebrow">YOUR OUTPUTS</p><h2 id="results-title">Generated creatives</h2></div>
+          <div><p class="panel-eyebrow">YOUR OUTPUTS</p><h2 id="results-title">Generated outputs</h2></div>
           <button id="download-all-btn" class="btn btn-outline-dark results-download-all" type="button" hidden>Download all</button>
         </div>
         <div id="results-empty" class="results-empty">
           <span aria-hidden="true">✦</span>
           <strong>Your generated images will appear here</strong>
-          <p>Complete the project brief above to create your first product-locked 2000px set.</p>
+          <p id="results-empty-copy">Complete the brief above to create product-locked 2000px infographics or reviewed 1600px variant cards.</p>
         </div>
         <div id="results-grid" class="results-grid" aria-live="polite"></div>
       </section>

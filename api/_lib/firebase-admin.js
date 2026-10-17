@@ -124,6 +124,18 @@ const USAGE_TYPES = {
     limitCode: 'DAILY_PREPARATION_LIMIT_REACHED',
     rateCode: 'PREPARATION_RATE_LIMITED',
     label: 'product preparation'
+  },
+  variant: {
+    countField: 'variantCount',
+    lastRequestField: 'lastVariantAt',
+    maximumEnvironment: 'MAX_DAILY_VARIANT_GENERATIONS',
+    maximumFallback: 8,
+    globalMaximumEnvironment: 'MAX_DAILY_GLOBAL_VARIANT_GENERATIONS',
+    cooldownEnvironment: 'VARIANT_GENERATION_COOLDOWN_SECONDS',
+    cooldownFallback: 5,
+    limitCode: 'DAILY_VARIANT_LIMIT_REACHED',
+    rateCode: 'VARIANT_RATE_LIMITED',
+    label: 'variant generation'
   }
 };
 
@@ -206,9 +218,14 @@ function reserveProductPreparation(uid) {
   return reserveUsage(uid, 'preparation');
 }
 
+function reserveVariantGeneration(uid) {
+  return reserveUsage(uid, 'variant');
+}
+
 module.exports = {
   ApiError,
   reserveGeneration,
   reserveProductPreparation,
+  reserveVariantGeneration,
   verifyFirebaseUser
 };

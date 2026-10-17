@@ -9,6 +9,11 @@ const {
   verifyFirebaseUser
 } = require('./_lib/firebase-admin');
 const { removeBackground } = require('./_lib/photoroom');
+const {
+  PreparationProofError,
+  createPreparationProof,
+  requiredPreparationProofSecret
+} = require('./_lib/preparation-proof');
 
 const MAX_REQUEST_BYTES = 1.8 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 1.25 * 1024 * 1024;
@@ -32,6 +37,17 @@ function parseRequestBody(request) {
     catch { throw new ApiError(400, 'INVALID_JSON', 'The request body is not valid JSON.'); }
   }
   return request.body;
+}
+
+function preparationProofSecret() {
+  try {
+    return requiredPreparationProofSecret();
+  } catch (error) {
+    if (error instanceof PreparationProofError) {
+      throw new ApiError(503, 'SERVICE_NOT_CONFIGURED', 'Product preparation proof signing is not configured.');
+    }
+    throw error;
+  }
 }
 
 function decodeImage(dataUrl) {
@@ -140,6 +156,13 @@ async function encodeCutout(input, quality, lossless = false) {
     .rotate()
     .ensureAlpha()
     .trim({ threshold: 8 })
+    .extend({
+      top: 4,
+      bottom: 4,
+      left: 4,
+      right: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 }
+    })
     .resize({
       width: 1800,
       height: 1800,
@@ -209,6 +232,7 @@ module.exports = async function prepareProduct(request, response) {
     }
 
     const user = await verifyFirebaseUser(request);
+    const proofSecret = preparationProofSecret();
     const body = parseRequestBody(request);
     const decoded = decodeImage(body?.image);
     await reserveProductPreparation(user.uid);
@@ -228,8 +252,14 @@ module.exports = async function prepareProduct(request, response) {
     }
 
     const cutout = await optimizeCutout(transparentSource);
+    const preparationProof = createPreparationProof({
+      cutout: cutout.data,
+      uid: user.uid,
+      secret: proofSecret
+    });
     return respond(response, 200, {
       cutout: `data:image/webp;base64,${cutout.data.toString('base64')}`,
+      preparationProof,
       width: cutout.info.width,
       height: cutout.info.height,
       provider: cutoutProvider,

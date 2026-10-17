@@ -11,76 +11,80 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header" id="top">
     <nav class="nav container" aria-label="Main navigation">
       <a class="brand" href="#top" aria-label="Listing Optimization AI home">
         <img src="assets/logo_black.svg" alt="Listing Optimization AI">
       </a>
-      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
-      <div class="nav-panel">
-        <div class="nav-links"><a href="#pricing">Pricing</a><a href="#features">Features</a><a href="#faq">FAQs</a><a href="#api">API</a></div>
-        <div class="nav-actions"><a href="/login.html">Log in</a><a class="btn btn-outline btn-small" href="#demo">Book a demo</a><a class="btn btn-primary btn-small" href="/dashboard.html">Get Started Free</a></div>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-panel"><span></span><span></span><span></span></button>
+      <div id="nav-panel" class="nav-panel">
+        <div class="nav-links"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#demo">Product tour</a><a href="#faq">FAQs</a></div>
+        <div class="nav-actions"><a href="/login.html">Log in</a><a class="btn btn-outline btn-small" href="#demo">Watch demo</a><a class="btn btn-primary btn-small" href="/dashboard.html">Get Started Free</a></div>
       </div>
     </nav>
-    <a class="dashboard-link container" href="/dashboard.html"><span aria-hidden="true">↗</span> Dashboard</a>
   </header>
 
-  <main>
+  <main id="main-content">
     <!-- 1. Hero -->
     <section class="hero light-section" id="app">
       <div class="hero-grid container reveal">
         <div class="hero-content">
-          <div class="eyebrow"><span></span> The Creative OS for Amazon Sellers</div>
-          <h1>Generate high-converting Amazon images and A+ content in minutes.</h1>
-          <p class="hero-copy">Using AI trained on thousands of winning listings.</p>
-          <a class="btn btn-primary hero-cta" href="/dashboard.html">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Zm9 4.36v-1.72l-2.08-.8a7.2 7.2 0 0 0-.59-1.42l.91-2.04-1.22-1.22-2.04.91a7.2 7.2 0 0 0-1.42-.59L13.86 3h-1.72l-.8 2.08c-.5.15-.97.35-1.42.59l-2.04-.91-1.22 1.22.91 2.04c-.24.45-.44.92-.59 1.42L3 11.14v1.72l2.08.8c.15.5.35.97.59 1.42l-.91 2.04 1.22 1.22 2.04-.91c.45.24.92.44 1.42.59l.8 2.08h1.72l.8-2.08c.5-.15.97-.35 1.42-.59l2.04.91 1.22-1.22-.91-2.04c.24-.45.44-.92.59-1.42l2.08-.8Z"/></svg>
-            Generate
-          </a>
-          <div class="trust-row">
-            <div><span class="trust-icon">★</span><p><strong>Trusted by 1,000+ Brands</strong><br>and 100+ Agencies</p></div>
-            <div><span class="trust-icon card-off" aria-hidden="true"></span><p><strong>Free Trial, No credit card needed.</strong><br><a href="/dashboard.html">Try now →</a></p></div>
+          <div class="eyebrow"><span></span> Creative intelligence for Amazon sellers</div>
+          <h1>Turn Amazon listings into high-converting product experiences.</h1>
+          <p class="hero-copy">Transform real product photography and a verified product brief into marketplace images, infographics, A+ modules, and reviewed product variants in one controlled workflow.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary hero-cta" href="/dashboard.html">Start free <span aria-hidden="true">→</span></a>
+            <a class="btn btn-outline-dark hero-secondary" href="#features">Explore the platform</a>
+          </div>
+          <div class="trust-row" aria-label="Creative workflow safeguards">
+            <div><span class="trust-check" aria-hidden="true">✓</span><p><strong>Product-locked workflow</strong><br>Approve the original cutout before generation.</p></div>
+            <div><span class="trust-check" aria-hidden="true">✓</span><p><strong>Copy stays under your control</strong><br>Only verified claims reach the final creative.</p></div>
           </div>
         </div>
-        <figure class="hero-flag-card" aria-label="Amazon United States marketplace">
-          <div class="flag-halo" aria-hidden="true"></div>
-          <img src="images/hero/us-flag-premium.svg" width="1920" height="1080" alt="Premium stylized United States flag with cinematic fabric lighting and gold stars" fetchpriority="high">
-          <span class="flag-chip flag-chip-top">50 states</span>
-          <span class="flag-chip flag-chip-bottom">1 marketplace</span>
-        </figure>
+        <div class="hero-product-scene" aria-label="A product listing transformed into coordinated marketplace creatives">
+          <figure class="hero-asset hero-asset-main"><img src="images/gallery/review-1.png" width="800" height="800" alt="Finished sunscreen product main image" fetchpriority="high"></figure>
+          <figure class="hero-asset hero-asset-benefit"><img src="images/gallery/review-2.png" width="800" height="800" alt="Finished sunscreen benefit infographic" fetchpriority="high"></figure>
+          <figure class="hero-asset hero-asset-lifestyle"><img src="images/gallery/review-4.png" width="800" height="800" alt="Finished sunscreen lifestyle creative" fetchpriority="high"></figure>
+          <div class="hero-workflow-chip"><span>Review insights</span><i aria-hidden="true">→</i><span>Approved brief</span><i aria-hidden="true">→</i><strong>Creative set</strong></div>
+        </div>
       </div>
     </section>
 
-    <!-- 2. Brand logos -->
-    <section class="logo-strip light-section" aria-label="Trusted brands">
-      <div class="container"><p class="overline centered">USED BY TEAMS BEHIND LEADING BRANDS</p><div class="logo-grid"><img src="images/brands/heinz.png" width="400" height="200" alt="Stylized Heinz wordmark" loading="lazy"><img src="images/brands/dove.png" width="400" height="200" alt="Stylized Dove wordmark" loading="lazy"><img src="images/brands/new-balance.png" width="400" height="200" alt="Stylized New Balance wordmark" loading="lazy"><img src="images/brands/oral-b.png" width="400" height="200" alt="Stylized Oral-B wordmark" loading="lazy"><img src="images/brands/oxo.png" width="400" height="200" alt="Stylized OXO wordmark" loading="lazy"><img src="images/brands/dyson.png" width="400" height="200" alt="Stylized Dyson wordmark" loading="lazy"><img src="images/brands/singer.png" width="400" height="200" alt="Stylized Singer wordmark" loading="lazy"><img src="images/brands/hp.png" width="400" height="200" alt="Stylized HP wordmark" loading="lazy"><img src="images/brands/huggies.png" width="400" height="200" alt="Stylized Huggies wordmark" loading="lazy"></div></div>
+    <!-- 2. Product proof -->
+    <section class="proof-strip light-section" aria-label="Platform capabilities">
+      <div class="container proof-grid">
+        <article><span>01</span><div><strong>Brief-led</strong><p>Turn verified benefits and approved copy into a clear creative direction.</p></div></article>
+        <article><span>02</span><div><strong>Product accurate</strong><p>Keep the approved photographed product layer unchanged in standard infographics.</p></div></article>
+        <article><span>03</span><div><strong>Marketplace ready</strong><p>Review and export polished square, landscape, and portrait JPG assets.</p></div></article>
+      </div>
     </section>
 
     <!-- 3. Stats -->
     <section class="stats dark-section">
       <div class="container stats-grid reveal">
-        <article><span class="metric-icon">◷</span><div><strong>84</strong><p>Hours saved<br>per listing</p></div></article>
-        <article><span class="metric-icon">＄</span><div><strong>500k+</strong><p>USD saved per year<br>for large brands</p></div></article>
-        <article><span class="metric-icon">↗</span><div><strong>27%</strong><p>Increase in<br>conversion rate</p></div></article>
+        <article><span class="metric-icon">01</span><div><strong>3</strong><p>Source photos<br>per creative project</p></div></article>
+        <article><span class="metric-icon">02</span><div><strong>11</strong><p>Controlled creative<br>directions</p></div></article>
+        <article><span class="metric-icon">03</span><div><strong>2000px</strong><p>High-resolution<br>creative exports</p></div></article>
       </div>
     </section>
 
     <!-- 4. How it works -->
     <section class="how light-section" id="features">
       <div class="container">
-        <div class="section-heading reveal"><p class="overline">FROM ASIN TO ASSET</p><h2>How Listing Optimization AI Works</h2><p>Generate high-converting Amazon images in just a few simple steps.</p></div>
+        <div class="section-heading reveal"><p class="overline">FROM PHOTO TO CREATIVE SET</p><h2>A controlled workflow from upload to export</h2><p>Keep the photographed product accurate while you direct the message, format, and final visual.</p></div>
         <div class="steps-grid">
-          <article class="step-card reveal"><span class="step-no">01</span><span class="step-icon">↗</span><h3>Enter ASIN</h3><p>Paste any Amazon product link.</p><div class="mini-ui asin-ui" role="img" aria-label="Amazon product URL entry interface"><small>AMAZON PRODUCT URL</small><div><span>amazon.com/dp/</span><b>B0C...</b><i>→</i></div><em>✓ Product found</em></div></article>
-          <article class="step-card reveal"><span class="step-no">02</span><span class="step-icon">⌁</span><h3>AI Analysis</h3><p>Reviews, competitors, and keywords.</p><div class="mini-ui analysis-ui" role="img" aria-label="AI analysis progress dashboard"><div class="scan-ring"><span>98%</span></div><div><i style="--w:88%"></i><i style="--w:70%"></i><i style="--w:78%"></i><small>1,284 reviews scanned</small></div></div></article>
-          <article class="step-card reveal"><span class="step-no">03</span><span class="step-icon">✦</span><h3>Generate Creatives</h3><p>Images, infographics, and A+ Content.</p><div class="mini-ui tile-ui" role="img" aria-label="Three generated product creative previews"><span class="tile-product p-orange">VITA</span><span class="tile-product p-blue">PURE</span><span class="tile-product p-green">ROOT</span></div></article>
-          <article class="step-card reveal"><span class="step-no">04</span><span class="step-icon">↑</span><h3>Direct Upload</h3><p>Upload directly to Seller Central with 1 click.</p><div class="mini-ui upload-ui" role="img" aria-label="Successful direct upload confirmation"><span>✓</span><strong>Ready to publish</strong><button type="button" tabindex="-1">Upload to Amazon →</button></div></article>
+          <article class="step-card reveal"><span class="step-no">01</span><span class="step-icon">↑</span><h3>Upload product photos</h3><p>Choose up to three clear source images and set the strongest primary angle.</p><div class="mini-ui asin-ui" role="img" aria-label="Product photo upload interface"><small>PRIMARY PRODUCT PHOTO</small><div><span>front-angle.webp</span><b>1.8 MB</b><i>✓</i></div><em>✓ Ready to prepare</em></div></article>
+          <article class="step-card reveal"><span class="step-no">02</span><span class="step-icon">⌁</span><h3>Approve the product layer</h3><p>Inspect the isolated product before any paid creative generation begins.</p><div class="mini-ui analysis-ui" role="img" aria-label="Product cutout review status"><div class="scan-ring"><span>200%</span></div><div><i style="--w:88%"></i><i style="--w:70%"></i><i style="--w:78%"></i><small>Fidelity review required</small></div></div></article>
+          <article class="step-card reveal"><span class="step-no">03</span><span class="step-icon">✦</span><h3>Direct the creative</h3><p>Add verified copy and choose up to three marketplace-ready concepts.</p><div class="mini-ui tile-ui" role="img" aria-label="Three selected product creative concepts"><span class="tile-product p-orange">MAIN</span><span class="tile-product p-blue">A+</span><span class="tile-product p-green">LIFE</span></div></article>
+          <article class="step-card reveal"><span class="step-no">04</span><span class="step-icon">↓</span><h3>Review and export</h3><p>Inspect the finished set and download high-resolution JPG assets.</p><div class="mini-ui upload-ui" role="img" aria-label="Successful creative export confirmation"><span>✓</span><strong>Ready to download</strong><button type="button" tabindex="-1">Export JPG →</button></div></article>
         </div>
       </div>
     </section>
 
     <!-- 5. Reviews -->
     <section class="reviews light-section">
-      <div class="container split-heading reveal"><div><p class="overline">SEE WHY EVERYONE IS TALKING ABOUT THIS PRODUCT</p><h2>Built From Real Customer Reviews</h2><p>The platform scans Amazon reviews to identify the exact problems and desires customers mention most. Your images are then generated around those insights so they instantly resonate with buyers.</p><a class="btn btn-primary" href="/dashboard.html">Start Free <span>→</span></a></div><div class="reviews-hero-image"><img src="images/reviews-feature.png" width="500" height="350" alt="Build from real customers reviews diagram" loading="lazy"></div></div>
+      <div class="container split-heading reveal"><div><p class="overline">CUSTOMER LANGUAGE, VERIFIED BY YOU</p><h2>Turn real buyer language into clearer creative direction</h2><p>Bring substantiated customer needs, product benefits, and approved claims into the brief. The studio keeps that copy separate from image generation so every final word remains editable and reviewable.</p><a class="btn btn-primary" href="/dashboard.html">Start a creative set <span>→</span></a></div><div class="reviews-hero-image"><img src="images/reviews-feature.png" width="500" height="350" alt="Example of verified customer language used to inform a product brief" loading="lazy"></div></div>
       <div class="container image-gallery gallery-eight" aria-label="Generated customer-focused listing examples">
         <figure class="gallery-card"><img src="images/gallery/review-1.png" width="800" height="800" alt="William & Claire Sunscreen product box and tube studio shot" loading="lazy"></figure>
         <figure class="gallery-card"><img src="images/gallery/review-2.png" width="800" height="800" alt="Non-Greasy Gel Formula 60ml feature infographic" loading="lazy"></figure>
@@ -117,54 +121,54 @@
     <!-- 7. Variants -->
     <section class="variants light-section">
       <div class="container section-heading reveal"><p class="overline">VARIANT STUDIO</p><h2>Design Product Variants in Every Colour, Size, and Style</h2><p>Easily create multiple versions of your product with different colors, sizes, and styles. Generate consistent, high-quality visuals for every variation without extra design effort.</p></div>
-      <div class="variant-tabs reveal" role="tablist" aria-label="Product variant type"><button class="active" role="tab" aria-selected="true" data-variant="color">Color</button><button role="tab" aria-selected="false" data-variant="size">Size</button><button role="tab" aria-selected="false" data-variant="shape">Shape</button></div>
-      <div class="container variant-stage reveal"><div class="variant-copy"><span class="variant-kicker">11 VARIANTS · 8 SECONDS</span><h3 id="variant-title">Find their perfect shade.</h3><p id="variant-copy">Turn one source image into a complete colorway, keeping light, texture, and branding perfectly consistent.</p><button class="btn btn-dark">Try It Yourself →</button></div><div class="variant-gallery" id="variant-gallery" aria-live="polite"></div></div>
+      <div class="variant-tabs reveal" role="tablist" aria-label="Product variant type"><button type="button" class="active" role="tab" aria-selected="true" data-variant="color">Color</button><button type="button" role="tab" aria-selected="false" data-variant="size">Size</button><button type="button" role="tab" aria-selected="false" data-variant="shape">Shape</button></div>
+      <div class="container variant-stage reveal"><div class="variant-copy"><span class="variant-kicker">CONTROLLED VARIANT EDITING</span><h3 id="variant-title">Find their perfect shade.</h3><p id="variant-copy">Explore one requested product change at a time, then compare every result with the real SKU before use.</p><a class="btn btn-dark" href="/dashboard.html">Open Variant Studio →</a></div><div class="variant-gallery" id="variant-gallery" aria-live="polite"></div></div>
     </section>
 
     <!-- 8. Comparison -->
     <section class="comparison dark-section">
-      <div class="container section-heading light-text reveal"><p class="overline">THE EXPERT DIFFERENCE</p><h2>Built by Amazon experts.<br>Not generic AI.</h2></div>
+      <div class="container section-heading light-text reveal"><p class="overline">THE CONTROLLED DIFFERENCE</p><h2>Creative direction with safeguards.<br>Not one magic prompt.</h2></div>
       <div class="container compare-grid reveal">
-        <article class="compare-card typical"><div class="compare-title"><span>×</span><div><small>TYPICAL TOOLS</small><h3>Pretty pixels. No strategy.</h3></div></div><ul><li><i>×</i><div><strong>Random AI Generation</strong><p>Outputs change with every prompt and lack a repeatable conversion framework.</p></div></li><li><i>×</i><div><strong>Generic AI Output</strong><p>Visuals are built for everyone, not specifically for Amazon shoppers.</p></div></li><li><i>×</i><div><strong>No Context</strong><p>No customer reviews, competitor data, or category intelligence behind the work.</p></div></li><li><i>×</i><div><strong>Hallucinate</strong><p>Product features and details can drift away from what you actually sell.</p></div></li></ul></article>
-        <article class="compare-card ours"><div class="popular-pill">THIS PLATFORM</div><div class="compare-title"><span>✓</span><div><small>LISTING OPTIMIZATION AI</small><h3>Every pixel has a job.</h3></div></div><ul><li><i>✓</i><div><strong>Built for Amazon Performance</strong><p>Proprietary AI trained exclusively on proven Amazon frameworks to engineer CTR-optimized visual assets.</p></div></li><li><i>✓</i><div><strong>Trained on Winning Frameworks</strong><p>Models calibrated against top-converting Amazon architectures to execute proven visual hierarchies.</p></div></li><li><i>✓</i><div><strong>CTR + CVR Focused Assets</strong><p>High-fidelity visual protocols engineered to maximize engagement and accelerate transaction completion.</p></div></li></ul></article>
+        <article class="compare-card typical"><div class="compare-title"><span>×</span><div><small>OPEN-ENDED GENERATION</small><h3>Fast output. Limited control.</h3></div></div><ul><li><i>×</i><div><strong>Product drift</strong><p>Unrestricted generation can change packaging, labels, proportions, and product details.</p></div></li><li><i>×</i><div><strong>Copy inside the image</strong><p>Generated text can be misspelled, omitted, or difficult to revise accurately.</p></div></li><li><i>×</i><div><strong>No review gate</strong><p>Teams can publish assets before checking product fidelity and substantiating claims.</p></div></li><li><i>×</i><div><strong>Inconsistent exports</strong><p>Dimensions, formats, and layouts often require manual cleanup after generation.</p></div></li></ul></article>
+        <article class="compare-card ours"><div class="popular-pill">THIS PLATFORM</div><div class="compare-title"><span>✓</span><div><small>LISTING OPTIMIZATION AI</small><h3>Every important step stays reviewable.</h3></div></div><ul><li><i>✓</i><div><strong>Approved product layer</strong><p>Standard infographics composite the reviewed cutout instead of redrawing the product.</p></div></li><li><i>✓</i><div><strong>Deterministic copy</strong><p>Headlines, benefits, callouts, and labels are rendered from the text you approve.</p></div></li><li><i>✓</i><div><strong>Explicit fidelity checks</strong><p>Original cutouts and generated variants each require a separate visual review.</p></div></li><li><i>✓</i><div><strong>Consistent export formats</strong><p>Create controlled square, landscape, and portrait marketplace assets.</p></div></li></ul></article>
       </div>
     </section>
 
     <!-- 9. System -->
     <section class="system light-section">
-      <div class="container section-heading reveal"><p class="overline">AGENCYAI™ SYSTEM</p><h2>Your Competitors Use a Tool.<br>You Use a System.</h2></div>
-      <div class="container system-flow reveal"><article><span>01</span><i>♟</i><h3>Decades of<br>Learnings</h3><p>Battle-tested Amazon expertise.</p></article><b>→</b><article><span>02</span><i>⌘</i><h3>Winning<br>Patterns</h3><p>Frameworks proven to convert.</p></article><b>→</b><article><span>03</span><i>✦</i><h3>AI<br>Execution</h3><p>Intelligence at machine speed.</p></article><b>→</b><article class="flow-final"><span>04</span><i>↗</i><h3>Conversion-Focused<br>Output</h3><p>Creative that moves metrics.</p></article></div>
+      <div class="container section-heading reveal"><p class="overline">A REVIEWABLE SYSTEM</p><h2>Move from source photo to finished set with confidence.</h2></div>
+      <div class="container system-flow reveal"><article><span>01</span><i>↑</i><h3>Source<br>material</h3><p>Real product photography.</p></article><b>→</b><article><span>02</span><i>✓</i><h3>Verified<br>brief</h3><p>Approved facts and copy.</p></article><b>→</b><article><span>03</span><i>✦</i><h3>Controlled<br>generation</h3><p>One concept at a time.</p></article><b>→</b><article class="flow-final"><span>04</span><i>↓</i><h3>Review and<br>export</h3><p>High-resolution deliverables.</p></article></div>
     </section>
 
     <!-- 10. Features -->
     <section class="feature-suite dark-section">
       <div class="container section-heading light-text reveal"><p class="overline">ONE PLATFORM. THE FULL STACK.</p><h2>Everything you need to win on Amazon.</h2><p>From research to revenue, every workflow is connected.</p></div>
       <div class="container feature-grid">
-        <article class="reveal"><span><img src="assets/icons/feature-1.svg" alt="" aria-hidden="true"></span><h3>Market Intelligence</h3><p>Reviews + competitive analysis that reveals why customers buy.</p></article><article class="reveal"><span><img src="assets/icons/feature-2.svg" alt="" aria-hidden="true"></span><h3>Full Listing Creatives</h3><p>Main images, lifestyle images, infographics, and A+ content.</p></article><article class="reveal"><span><img src="assets/icons/feature-3.svg" alt="" aria-hidden="true"></span><h3>SERP Simulation</h3><p>See if your image stands out—and fix it if it doesn't.</p></article><article class="reveal"><span><img src="assets/icons/feature-4.svg" alt="" aria-hidden="true"></span><h3>Winning Templates</h3><p>Clone A/B test winners without starting from scratch.</p></article><article class="reveal"><span><img src="assets/icons/feature-5.svg" alt="" aria-hidden="true"></span><h3>Built-in A/B Testing</h3><p>Launch split tests in one click and learn what wins.</p></article><article class="reveal"><span><img src="assets/icons/feature-6.svg" alt="" aria-hidden="true"></span><h3>On-Brand Creatives</h3><p>Your fonts, colors, moods, and rules, every time.</p></article><article class="reveal"><span><img src="assets/icons/feature-7.svg" alt="" aria-hidden="true"></span><h3>Collaborate</h3><p>Invite your team, share feedback, and stay in sync.</p></article><article class="reveal"><span><img src="assets/icons/feature-8.svg" alt="" aria-hidden="true"></span><h3>Main Image Generator</h3><p>CTR-focused images designed to stop the scroll.</p></article>
-      </div><div class="centered"><a class="btn btn-primary" href="#pricing">Start Free →</a></div>
+        <article class="reveal"><span><img src="assets/icons/feature-1.svg" alt="" aria-hidden="true"></span><h3>Product-Locked Compositing</h3><p>Keep the approved photographed product intact in standard infographic workflows.</p></article><article class="reveal"><span><img src="assets/icons/feature-2.svg" alt="" aria-hidden="true"></span><h3>Full Creative Sets</h3><p>Create main images, lifestyle scenes, benefit infographics, and A+ modules.</p></article><article class="reveal"><span><img src="assets/icons/feature-3.svg" alt="" aria-hidden="true"></span><h3>Eleven Layout Directions</h3><p>Choose purpose-built concepts for features, comparisons, usage, and more.</p></article><article class="reveal"><span><img src="assets/icons/feature-4.svg" alt="" aria-hidden="true"></span><h3>Exact Copy Controls</h3><p>Render approved headlines, benefits, callouts, and labels deterministically.</p></article><article class="reveal"><span><img src="assets/icons/feature-5.svg" alt="" aria-hidden="true"></span><h3>Variant Studio</h3><p>Explore controlled color, size, or shape edits behind a second review gate.</p></article><article class="reveal"><span><img src="assets/icons/feature-6.svg" alt="" aria-hidden="true"></span><h3>Visual Style Controls</h3><p>Direct the scene with premium, clinical, performance, or lifestyle styling.</p></article><article class="reveal"><span><img src="assets/icons/feature-7.svg" alt="" aria-hidden="true"></span><h3>Multi-Format Output</h3><p>Compose square, landscape, and portrait assets for marketplace use.</p></article><article class="reveal"><span><img src="assets/icons/feature-8.svg" alt="" aria-hidden="true"></span><h3>Secure Provider Access</h3><p>Keep image and authentication credentials on protected server routes.</p></article>
+      </div><div class="centered"><a class="btn btn-primary" href="/dashboard.html">Start Free →</a></div>
     </section>
 
     <!-- 11. Pricing -->
     <section class="pricing light-section" id="pricing">
       <div class="container section-heading reveal"><p class="overline">SIMPLE PRICING</p><h2>Affordable plans to grow your<br>Amazon sales faster.</h2><p>Start free. Upgrade when you're ready. Cancel anytime.</p></div>
-      <div class="billing-toggle reveal" aria-label="Billing frequency"><button class="active" data-billing="monthly" aria-pressed="true">Monthly</button><button data-billing="yearly" aria-pressed="false">Yearly <span>Save 2 months</span></button></div>
+      <div class="billing-toggle reveal" aria-label="Billing frequency"><button type="button" class="active" data-billing="monthly" aria-pressed="true">Monthly</button><button type="button" data-billing="yearly" aria-pressed="false">Yearly <span>Save 2 months</span></button></div>
       <p class="billing-note" aria-live="polite">Flexible monthly billing</p>
       <div class="container pricing-grid">
         <article class="price-card reveal"><small>STARTER</small><h3>For solo sellers</h3><p>Everything you need to improve your first listings.</p><a class="btn btn-outline-dark" href="/dashboard.html">Get Started Now</a><ul><li>✓ 3 listings per month</li><li>✓ 40 AI-generated images</li><li>✓ Review & competitor analysis</li><li>✓ Main images + infographics</li><li>✓ Email support</li></ul></article>
-        <article class="price-card featured reveal"><div class="price-ribbon">MOST POPULAR</div><small>PROFESSIONAL</small><h3>For growing brands</h3><p>Scale high-performing creative across your catalog.</p><a class="btn btn-primary" href="/dashboard.html">Get Started Now</a><ul><li>✓ 15 listings per month</li><li>✓ 200 AI-generated images</li><li>✓ Full A+ Content builder</li><li>✓ Brand kit + variant studio</li><li>✓ SERP simulator + A/B testing</li><li>✓ Priority support</li></ul></article>
-        <article class="price-card reveal"><small>ENTERPRISE</small><h3>For teams & agencies</h3><p>Volume, governance, and support for serious scale.</p><a class="btn btn-outline-dark" href="#enterprise">Get Started Now</a><ul><li>✓ Unlimited brands & teammates</li><li>✓ Custom usage & volume pricing</li><li>✓ API + direct Seller Central upload</li><li>✓ Custom AI model fine-tuning</li><li>✓ Dedicated account manager</li></ul></article>
+        <article class="price-card featured reveal"><div class="price-ribbon">MOST POPULAR</div><small>PROFESSIONAL</small><h3>For growing brands</h3><p>Scale controlled creative production across more listings.</p><a class="btn btn-primary" href="/dashboard.html">Get Started Now</a><ul><li>✓ 15 listings per month</li><li>✓ 200 AI-generated images</li><li>✓ Eleven creative directions</li><li>✓ A+ content layouts</li><li>✓ Product variant studio</li><li>✓ Priority support</li></ul></article>
+        <article class="price-card reveal"><small>ENTERPRISE</small><h3>For teams & agencies</h3><p>Volume, governance, and launch support for larger catalogs.</p><a class="btn btn-outline-dark" href="#enterprise">Contact sales</a><ul><li>✓ Custom usage limits</li><li>✓ Catalog-based volume pricing</li><li>✓ Secure provider configuration</li><li>✓ Workflow and governance review</li><li>✓ Dedicated launch support</li></ul></article>
       </div>
     </section>
 
     <!-- 12. Enterprise -->
     <section class="enterprise dark-section" id="enterprise">
-      <div class="container enterprise-inner reveal"><div><p class="overline">ENTERPRISE</p><h2>Need custom pricing<br>for enterprise?</h2><p>Tailored solutions for high-volume platforms and large organizations. Get dedicated resources and custom models fine-tuned to your exact needs.</p><a class="btn btn-primary" href="mailto:sales@listingoptimization.ai">Get Started Now →</a></div><div class="enterprise-features"><article><span><img src="assets/icons/enterprise-1.svg" alt="" aria-hidden="true"></span><div><h3>Unlimited scale</h3><p>Volume discounts designed around your catalog.</p></div></article><article><span><img src="assets/icons/enterprise-2.svg" alt="" aria-hidden="true"></span><div><h3>24/7 priority support</h3><p>A dedicated account manager who knows your business.</p></div></article><article><span><img src="assets/icons/enterprise-3.svg" alt="" aria-hidden="true"></span><div><h3>Custom model fine-tuning</h3><p>AI trained on your brand, data, and winning assets.</p></div></article></div></div>
+      <div class="container enterprise-inner reveal"><div><p class="overline">ENTERPRISE</p><h2>Need a controlled workflow for a larger catalog?</h2><p>Plan usage limits, provider configuration, governance, and rollout support around the way your team actually produces listing creative.</p><a class="btn btn-primary" href="mailto:sales@listingoptimization.ai">Talk to sales →</a></div><div class="enterprise-features"><article><span><img src="assets/icons/enterprise-1.svg" alt="" aria-hidden="true"></span><div><h3>Catalog-scale planning</h3><p>Volume options aligned to your listing roadmap.</p></div></article><article><span><img src="assets/icons/enterprise-2.svg" alt="" aria-hidden="true"></span><div><h3>Priority onboarding</h3><p>Guided setup for authentication, providers, and review gates.</p></div></article><article><span><img src="assets/icons/enterprise-3.svg" alt="" aria-hidden="true"></span><div><h3>Workflow governance</h3><p>Clear operational controls for claims, approvals, and exports.</p></div></article></div></div>
     </section>
 
     <!-- 13. Video demo -->
     <section class="video-demo light-section" id="demo">
       <div class="container section-heading reveal"><p class="overline">PRODUCT TOUR</p><h2>See how it works in<br>just a few minutes.</h2></div>
-      <div class="container video-frame reveal" id="video-frame"><div class="video-top"><span class="brand-mark mini"><i></i><i></i><i></i></span><small>LISTING OPTIMIZATION AI · PRODUCT TOUR</small><span>03:24</span></div><div class="video-content"><div><span>FROM THIS</span><div class="plain-listing"><i class="bottle">PURE</i></div></div><b>→</b><div><span>TO THIS</span><div class="ad-card mint"><b>CLINICALLY<br>CLEAN.</b><span class="bottle">PURE</span></div></div></div><button class="play-button" aria-label="Play product tour">▶</button></div>
+      <div class="container video-frame reveal" id="video-frame"><div class="video-top"><span class="brand-mark mini"><i></i><i></i><i></i></span><small>LISTING OPTIMIZATION AI · PRODUCT TOUR</small><span>03:24</span></div><div class="video-content"><div><span>FROM THIS</span><div class="plain-listing"><i class="bottle">PURE</i></div></div><b>→</b><div><span>TO THIS</span><div class="ad-card mint"><b>CLINICALLY<br>CLEAN.</b><span class="bottle">PURE</span></div></div></div><button class="play-button" type="button" aria-label="Play product tour">▶</button></div>
     </section>
 
     <!-- 14. Testimonials -->
@@ -178,11 +182,11 @@
         <article><a class="testimonial-video" href="https://www.youtube.com/watch?v=T5Nz0UfEM1Y" target="_blank" rel="noreferrer" aria-label="Watch David Kohn's testimonial on YouTube"><img src="images/testimonials/thumb-05.png" width="640" height="360" alt="Video thumbnail for David Kohn's testimonial" loading="lazy"><span class="video-play">▶</span><small>WATCH STORY</small></a><div class="quote">“I do full projects in 30 minutes now—and they are really good.”</div><footer><span>DK</span><div><strong>David Kohn</strong><small>Helps 7–8-Figure Amazon Sellers</small></div></footer></article>
         <article><a class="testimonial-video" href="https://www.youtube.com/watch?v=bxbOHQpc82k" target="_blank" rel="noreferrer" aria-label="Watch Rowie's testimonial on YouTube"><img src="images/testimonials/thumb-06.png" width="640" height="360" alt="Video thumbnail for Rowie's testimonial" loading="lazy"><span class="video-play">▶</span><small>WATCH STORY</small></a><div class="quote">“We have successfully eliminated revisions from our process, which were really expensive.”</div><footer><span>R</span><div><strong>Rowie</strong><small>Creative Director · Amazon Agency</small></div></footer></article>
       </div></div>
-      <div class="container testimonial-nav"><div class="avatar-dots" aria-label="Choose a testimonial"><button class="active" data-slide="0">BH</button><button data-slide="1">CM</button><button data-slide="2">TH</button><button data-slide="3">AP</button><button data-slide="4">DK</button><button data-slide="5">R</button></div><div><button id="test-prev" aria-label="Previous testimonial">←</button><button id="test-next" aria-label="Next testimonial">→</button></div></div>
+      <div class="container testimonial-nav"><div class="avatar-dots" aria-label="Choose a testimonial"><button type="button" class="active" data-slide="0">BH</button><button type="button" data-slide="1">CM</button><button type="button" data-slide="2">TH</button><button type="button" data-slide="3">AP</button><button type="button" data-slide="4">DK</button><button type="button" data-slide="5">R</button></div><div><button id="test-prev" type="button" aria-label="Previous testimonial">←</button><button id="test-next" type="button" aria-label="Next testimonial">→</button></div></div>
     </section>
 
     <!-- 15. Social proof -->
-    <section class="social-cta dark-section"><div class="container social-cta-inner reveal"><div class="avatar-stack"><span>BH</span><span>CM</span><span>TH</span><span>AP</span><i>+996</i></div><h2>1,000+ Amazon sellers love<br>Listing Optimization AI.</h2><a class="btn btn-primary" href="#pricing">Start Free →</a></div></section>
+    <section class="social-cta dark-section"><div class="container social-cta-inner reveal"><div class="avatar-stack"><span>BH</span><span>CM</span><span>TH</span><span>AP</span></div><h2>Move from product photo to a reviewed creative set.</h2><a class="btn btn-primary" href="/dashboard.html">Start Free →</a></div></section>
 
     <!-- 16. Struggling CTA -->
     <section class="struggle light-section"><div class="container struggle-card reveal"><div><p class="overline">YOUR NEXT BESTSELLER STARTS HERE</p><h2>Struggling to increase Amazon sales?</h2><p>Let AI do the heavy lifting. Generate scroll-stopping images and A+ content that converts.</p><a class="btn btn-primary" href="#pricing">Get Started Free →</a></div><div class="struggle-art"><div class="orbit"><span class="product-object">NOVA<small>DAILY FORMULA</small></span><i class="orbit-stat top"><b>+27%</b> CVR</i><i class="orbit-stat bottom"><b>84h</b> saved</i></div></div></div></section>
@@ -204,20 +208,20 @@
       <details><summary>Will this actually help my CTR and conversion rate?</summary><p>The system is designed around proven Amazon conversion frameworks and customer insights. Results vary by product, category, traffic, offer, and execution, so we recommend validating improvements with tests.</p></details>
       <details><summary>Will it work for my product category?</summary><p>It supports a broad range of Amazon categories by analyzing the product, reviews, competitors, and category context before generating creative.</p></details>
       <details><summary>Do the images generated follow Amazon's rules?</summary><p>The workflow is designed with Amazon listing conventions in mind, but requirements can change by category and marketplace. Always review final assets against the current Seller Central guidelines before publishing.</p></details>
-      <details><summary>Can it help me understand my customers?</summary><p>Yes. Market Intelligence surfaces recurring complaints, desired outcomes, buying triggers, and language found across customer reviews.</p></details>
+      <details><summary>Can it analyze my Amazon reviews automatically?</summary><p>The current creative studio does not fetch review data automatically. Bring verified findings and approved customer language into the product brief so they can guide the creative without becoming unsubstantiated claims.</p></details>
       <details><summary>How accurate are the competitive insights?</summary><p>Insights are grounded in the listing and review data available during analysis. Treat them as decision support and verify any business-critical claim against its source.</p></details>
       <details><summary>Does this replace split testing?</summary><p>No. It helps you produce stronger hypotheses and variants faster; split testing remains the best way to confirm what wins with your actual shoppers.</p></details>
       <details><summary>Is my data private?</summary><p>Workspace data is used to provide the service and should be handled according to the platform's privacy and security terms. Contact the team for enterprise data requirements.</p></details>
       <details><summary>Can I collaborate with my team inside the tool?</summary><p>Yes. Team workflows support shared brands, feedback, and coordinated creative reviews, with expanded controls available for agencies and enterprises.</p></details>
       <details><summary>Do you offer support if I get stuck?</summary><p>Yes. Support is included across plans, with priority support and a dedicated account manager available for qualifying plans.</p></details>
     </div></div></section>
-    <span id="api" class="anchor-target"></span><span id="login" class="anchor-target"></span>
+    <span id="login" class="anchor-target"></span>
   </main>
 
   <!-- 20. Footer -->
   <footer class="footer dark-section">
-    <div class="container footer-top"><div class="footer-brand"><a class="brand" href="#top"><img src="assets/logo_black.svg" alt="Listing Optimization AI"></a><p>The Creative OS for Amazon Sellers, built for scale, speed, and conversion.</p><div class="amazon-badge"><b>amazon</b><span>SELLER CENTRAL PARTNER NETWORK<br>SOFTWARE PARTNER</span></div></div><div class="footer-links"><div><h3>PLATFORM</h3><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#api">API</a></div><div><h3>RESOURCES</h3><a href="#">Affiliate Program</a><a href="#demo">Office Hours</a><a href="mailto:support@listingoptimization.ai">Support</a></div><div><h3>GET STARTED</h3><a href="/dashboard.html">Start Free</a><a href="#demo">Book a Demo</a><a href="/login">Log In</a></div></div></div>
-    <div class="container footer-bottom"><p>© 2026 Listing Optimization AI. All rights reserved.</p><div class="legal"><a href="#">Terms of Use</a><a href="#">Cookie Policy</a><a href="#">Privacy Policy</a></div><div class="socials"><a href="https://www.youtube.com/@amzonestep" target="_blank" rel="noreferrer" aria-label="YouTube">▶</a><a href="https://www.facebook.com/amzonestep" target="_blank" rel="noreferrer" aria-label="Facebook">f</a><a href="https://x.com/amzonestep" target="_blank" rel="noreferrer" aria-label="X">𝕏</a><a href="https://www.instagram.com/amzonestep" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a><a href="https://www.linkedin.com/company/amzonestep" target="_blank" rel="noreferrer" aria-label="LinkedIn">in</a></div></div>
+    <div class="container footer-top"><div class="footer-brand"><a class="brand" href="#top"><img src="assets/logo_black.svg" alt="Listing Optimization AI"></a><p>The creative workspace for accurate, reviewable Amazon listing assets.</p></div><div class="footer-links"><div><h3>PLATFORM</h3><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="/dashboard.html">Creative Studio</a></div><div><h3>RESOURCES</h3><a href="#demo">Product Tour</a><a href="#faq">FAQs</a><a href="mailto:support@listingoptimization.ai">Support</a></div><div><h3>GET STARTED</h3><a href="/dashboard.html">Start Free</a><a href="#demo">Book a Demo</a><a href="/login.html">Log In</a></div></div></div>
+    <div class="container footer-bottom"><p>© 2026 Listing Optimization AI. All rights reserved.</p><div class="legal" aria-label="Legal documents"><span>Terms of Use</span><span>Cookie Policy</span><span>Privacy Policy</span></div><div class="socials"><a href="https://www.youtube.com/@amzonestep" target="_blank" rel="noreferrer" aria-label="YouTube">▶</a><a href="https://www.facebook.com/amzonestep" target="_blank" rel="noreferrer" aria-label="Facebook">f</a><a href="https://x.com/amzonestep" target="_blank" rel="noreferrer" aria-label="X">𝕏</a><a href="https://www.instagram.com/amzonestep" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a><a href="https://www.linkedin.com/company/amzonestep" target="_blank" rel="noreferrer" aria-label="LinkedIn">in</a></div></div>
   </footer>
   <script src="script.js"></script>
 </body>

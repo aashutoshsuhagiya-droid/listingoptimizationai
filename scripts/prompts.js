@@ -103,7 +103,7 @@ for (const [id, label, subject, colors, headline] of reviews) {
     id: `gallery/${id}`,
     filename: `images/gallery/${id}.png`,
     width: 800,
-    height: 600,
+    height: 800,
     prompt: prompt(
       'Use case: product-mockup',
       'Asset type: Amazon-style product listing example',

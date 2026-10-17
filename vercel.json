@@ -6,6 +6,9 @@
     },
     "api/prepare-product.js": {
       "maxDuration": 120
+    },
+    "api/generate-variant.js": {
+      "maxDuration": 300
     }
   }
 }

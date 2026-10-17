@@ -8,7 +8,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "check": "node --check dashboard.js && node --check firebase.js && node --check scripts/set-generation-access.js && node --check api/generate-infographic.js && node --check api/prepare-product.js && node --check api/_lib/firebase-admin.js && node --check api/_lib/photoroom.js && node --check api/_lib/prompt.js && node tests/prompt.test.js && node tests/architecture.test.js",
+    "check": "node --check dashboard.js && node --check firebase.js && node --check scripts/set-generation-access.js && node --check api/generate-infographic.js && node --check api/generate-variant.js && node --check api/prepare-product.js && node --check api/_lib/firebase-admin.js && node --check api/_lib/photoroom.js && node --check api/_lib/preparation-proof.js && node --check api/_lib/prompt.js && node --check api/_lib/variant-images.js && node --check api/_lib/variant-prompt.js && node tests/preparation-proof.test.js && node tests/prompt.test.js && node tests/variant-images.test.js && node tests/variant-prompt.test.js && node tests/generate-variant.test.js && node tests/architecture.test.js",
     "images:dry-run": "node scripts/generate-images.js --dry-run",
     "images:generate": "node scripts/generate-images.js --all",
     "images:fallback": "node scripts/generate-images.js --all --fallback",
